@@ -98,9 +98,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth   
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/users/login").permitAll()
-                        .requestMatchers("/api/v1/users/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/api/v1/user/login").permitAll()
                         .anyRequest().authenticated()
                 );
         

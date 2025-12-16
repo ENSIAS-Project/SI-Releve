@@ -1,12 +1,9 @@
 package ma.ensias.sireleve.controller;
 
 import lombok.AllArgsConstructor;
-import ma.ensias.sireleve.Dto.LoginReplyDto;
-import ma.ensias.sireleve.Dto.LoginRequestDto;
 import ma.ensias.sireleve.Dto.UserCreateDto;
 import ma.ensias.sireleve.Dto.UserResponseDto;
 import ma.ensias.sireleve.Dto.UserUpdateDto;
-import ma.ensias.sireleve.service.AuthService;
 import ma.ensias.sireleve.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.CredentialNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -25,17 +21,6 @@ import javax.security.auth.login.CredentialNotFoundException;
 public class UserController {
 
     private final UserService userService;
-    private final AuthService authService;
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginReplyDto> login(@RequestBody LoginRequestDto loginRequest) {
-        try {
-            LoginReplyDto response = authService.authenticate(loginRequest);
-            return ResponseEntity.ok(response);
-        } catch (CredentialNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('SUPERADMIN')")
@@ -55,7 +40,7 @@ public class UserController {
     @PreAuthorize("hasRole('SUPERADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping

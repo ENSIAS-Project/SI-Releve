@@ -25,7 +25,8 @@ public class UserService {
         user.setNom(userDto.getNom());
         user.setPrenom(userDto.getPrenom());
         user.setEmail(userDto.getEmail());
-        user.setMotDePasse(passwordEncoder.encode(userDto.getMotDePasse()));
+        // TODO: Générer un mot de passe aléatoire et l'envoyer par email
+        user.setMotDePasse(passwordEncoder.encode("TempPass@123"));
         user.setRoles(userDto.getRoles());
 
         Utilisateur savedUser = utilisateurRepository.save(user);
