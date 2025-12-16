@@ -14,7 +14,7 @@ import ma.ensias.sireleve.Dto.LoginRequestDto;
 import ma.ensias.sireleve.service.AuthService;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/user")
 @AllArgsConstructor
 public class AuthController {
 
