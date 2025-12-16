@@ -1,3 +1,4 @@
 build/**
 # i dont need angular compiled files
 src/main/resources/static/**
+bin/**
