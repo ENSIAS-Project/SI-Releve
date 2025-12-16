@@ -2,6 +2,7 @@ package ma.ensias.sireleve.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ma.ensias.sireleve.enumz.Roles;
 
 import java.time.LocalDateTime;
 
@@ -20,8 +21,8 @@ public class Utilisateur {
     @Column(nullable = false)
     private String prenom;
 
-    @Column(nullable = false)
-    private String role;
+    @Column(name = "role",nullable = false)
+    private Roles roles;
 
     @Column(nullable = false, unique = true)
     private String email;
