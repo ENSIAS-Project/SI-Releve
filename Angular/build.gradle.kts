@@ -77,7 +77,22 @@ tasks.register<NodeTask>("Ngbuild") {
 }
 
 
+tasks.register<NodeTask>("Ngtest") {
+    dependsOn(installAngularUsingNpm)
+    script.set(file("node_modules/@angular/cli/bin/ng.js"))
+    args.set(listOf("test"))
+    ignoreExitValue.set(false)
+    //environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
+    workingDir.set(projectDir)
+    execOverrides {
+        standardOutput = System.out
+    }
+    inputs.dir("src")
+    outputs.upToDateWhen {
+        false
+    }
+}
+
 repositories {
 	mavenCentral()
-	
 }
