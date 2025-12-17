@@ -1,0 +1,116 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12">
+  <p-toast></p-toast>
+  
+  <div class="w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">SI-Releve</h2>
+        <p class="text-gray-600 mt-2">Connectez-vous à votre compte</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-2">
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <div class="relative">
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-envelope text-gray-400"></i>
+              <input 
+                type="email" 
+                id="email"
+                pInputText 
+                formControlName="email"
+                placeholder="votre.email@example.com"
+                class="w-full pl-10"
+                [ngClass]="{'ng-invalid ng-dirty': email?.invalid && email?.touched}"
+              />
+            </span>
+          </div>
+          <small 
+            *ngIf="email?.invalid && email?.touched" 
+            class="text-red-500 text-xs mt-1 block"
+          >
+            <span *ngIf="email?.errors?.['required']">L'email est requis</span>
+            <span *ngIf="email?.errors?.['email']">Format d'email invalide</span>
+          </small>
+        </div>
+
+        <div class="space-y-2">
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            Mot de passe
+          </label>
+          <div class="relative">
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-lock text-gray-400"></i>
+              <input 
+                [type]="passwordVisible ? 'text' : 'password'"
+                id="password"
+                pInputText 
+                formControlName="password"
+                placeholder="••••••••"
+                class="w-full pl-10 pr-10"
+                [ngClass]="{'ng-invalid ng-dirty': password?.invalid && password?.touched}"
+              />
+              <i 
+                [class]="passwordVisible ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-600"
+                (click)="togglePasswordVisibility()"
+              ></i>
+            </span>
+          </div>
+          <small 
+            *ngIf="password?.invalid && password?.touched" 
+            class="text-red-500 text-xs mt-1 block"
+          >
+            <span *ngIf="password?.errors?.['required']">Le mot de passe est requis</span>
+            <span *ngIf="password?.errors?.['minlength']">
+              Le mot de passe doit contenir au moins 6 caractères
+            </span>
+          </small>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <p-checkbox 
+              inputId="remember" 
+              [binary]="true"
+              styleClass="mr-2"
+            ></p-checkbox>
+            <label for="remember" class="text-sm text-gray-600 cursor-pointer">
+              Se souvenir de moi
+            </label>
+          </div>
+          <a href="#" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+            Mot de passe oublié?
+          </a>
+        </div>
+
+        <button 
+          pButton 
+          type="submit"
+          label="Se connecter"
+          [loading]="loading"
+          [disabled]="loading"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+          icon="pi pi-sign-in"
+        ></button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          Vous n'avez pas de compte? 
+          <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">
+            Contactez l'administrateur
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center mt-6">
+      <p class="text-sm text-gray-600">
+        © 2024 SiReleve - ENSIAS. Tous droits réservés.
+      </p>
+    </div>
+  </div>
+</div>
