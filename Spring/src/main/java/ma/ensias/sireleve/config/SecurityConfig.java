@@ -99,6 +99,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth   
                         .requestMatchers("/api/v1/user/login").permitAll()
+                        .requestMatchers("/**").permitAll() // allow angular SPA to be loaded
                         .anyRequest().authenticated()
                 );
         
