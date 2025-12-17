@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
         
         setTimeout(() => {
           if (response.role === 'ROLE_SUPERADMIN') {
-            this.router.navigate(['/admin/dashboard']);
+            this.router.navigate(['admin/dashboard']);
           } else {
             this.router.navigate(['/dashboard']);
           }
