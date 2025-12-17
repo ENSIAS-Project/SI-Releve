@@ -1,0 +1,199 @@
+<!-- src/app/components/agent-affectation/agent-affectation.component.html -->
+
+<div class="p-6 bg-gray-50 min-h-screen">
+  <p-toast></p-toast>
+  
+  <!-- En-tête -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+      Affectation des Quartiers aux Agents
+    </h1>
+    <p class="text-gray-600">
+      Gérer l'affectation des quartiers pour la collecte des relevés
+    </p>
+  </div>
+
+  <!-- Carte avec tableau -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    
+    <!-- Tableau -->
+    <p-table 
+      [value]="agents" 
+      [loading]="loading"
+      [paginator]="true" 
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} agents"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      styleClass="p-datatable-striped"
+      responsiveLayout="scroll">
+      
+      <!-- En-tête du tableau -->
+      <ng-template pTemplate="header">
+        <tr class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+          <th class="px-4 py-3 font-semibold">Nom</th>
+          <th class="px-4 py-3 font-semibold">Prénom</th>
+          <th class="px-4 py-3 font-semibold">Tél. Personnel</th>
+          <th class="px-4 py-3 font-semibold">Tél. Professionnel</th>
+          <th class="px-4 py-3 font-semibold">Quartier Affecté</th>
+          <th class="px-4 py-3 font-semibold text-center">Actions</th>
+        </tr>
+      </ng-template>
+
+      <!-- Corps du tableau -->
+      <ng-template pTemplate="body" let-agent>
+        <tr class="hover:bg-blue-50 transition-colors">
+          <!-- Nom -->
+          <td class="px-4 py-3">
+            <span class="font-medium text-gray-800">{{ agent.nom }}</span>
+          </td>
+
+          <!-- Prénom -->
+          <td class="px-4 py-3">
+            <span class="text-gray-700">{{ agent.prenom }}</span>
+          </td>
+
+          <!-- Téléphone Personnel -->
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-phone text-gray-500 text-sm"></i>
+              <span class="text-gray-700">{{ agent.tel_personnel || 'N/A' }}</span>
+            </div>
+          </td>
+
+          <!-- Téléphone Professionnel -->
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-phone text-blue-600 text-sm"></i>
+              <span class="text-gray-700">{{ agent.tel_professionnel }}</span>
+            </div>
+          </td>
+
+          <!-- Quartier - Mode Édition -->
+          <td class="px-4 py-3">
+            @if (isEditing(agent.id_agent)) {
+              <div class="flex items-center gap-2">
+                <p-dropdown 
+                  [options]="quartiers" 
+                  [(ngModel)]="selectedQuartier"
+                  optionLabel="nom_quartier" 
+                  optionValue="id_quartier"
+                  placeholder="Sélectionner un quartier"
+                  [showClear]="false"
+                  styleClass="w-full"
+                  appendTo="body">
+                </p-dropdown>
+              </div>
+            } @else {
+              <!-- Mode Affichage -->
+              @if (agent.nom_quartier) {
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                    <i class="pi pi-map-marker text-xs"></i>
+                    {{ agent.nom_quartier }}
+                  </span>
+                </div>
+              } @else {
+                <div>
+                  <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm">
+                    <i class="pi pi-times-circle text-xs"></i>
+                    Non affecté
+                  </span>
+                </div>
+              }
+            }
+          </td>
+
+          <!-- Actions -->
+          <td class="px-4 py-3">
+            @if (isEditing(agent.id_agent)) {
+              <!-- Mode Édition -->
+              <div class="flex justify-center gap-2">
+                <button 
+                  pButton 
+                  icon="pi pi-check" 
+                  class="p-button-success p-button-sm"
+                  pTooltip="Enregistrer"
+                  tooltipPosition="top"
+                  (click)="saveAffectation(agent)">
+                </button>
+                <button 
+                  pButton 
+                  icon="pi pi-times" 
+                  class="p-button-secondary p-button-sm"
+                  pTooltip="Annuler"
+                  tooltipPosition="top"
+                  (click)="cancelEditing()">
+                </button>
+              </div>
+            } @else {
+              <!-- Mode Affichage -->
+              <div class="flex justify-center gap-2">
+                <!-- Bouton Affecter/Modifier -->
+                <button 
+                  pButton 
+                  [icon]="agent.nom_quartier ? 'pi pi-pencil' : 'pi pi-plus'" 
+                  [class]="agent.nom_quartier ? 'p-button-warning p-button-sm' : 'p-button-info p-button-sm'"
+                  [pTooltip]="agent.nom_quartier ? 'Modifier' : 'Affecter'"
+                  tooltipPosition="top"
+                  (click)="startEditing(agent)">
+                </button>
+
+                <!-- Bouton Retirer (seulement si affecté) -->
+                @if (agent.nom_quartier) {
+                  <button 
+                    pButton 
+                    icon="pi pi-trash" 
+                    class="p-button-danger p-button-sm"
+                    pTooltip="Retirer l'affectation"
+                    tooltipPosition="top"
+                    (click)="retirerAffectation(agent)">
+                  </button>
+                }
+              </div>
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Template vide -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-8">
+            <div class="flex flex-col items-center gap-3">
+              <i class="pi pi-inbox text-gray-400 text-5xl"></i>
+              <p class="text-gray-600 text-lg">Aucun agent trouvé</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Légende -->
+  <div class="mt-6 bg-white rounded-lg shadow-md p-4">
+    <h3 class="text-sm font-semibold text-gray-700 mb-3">Légende :</h3>
+    <div class="flex flex-wrap gap-4 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
+        <span class="text-gray-600">Agent affecté</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-3 h-3 bg-gray-400 rounded-full"></span>
+        <span class="text-gray-600">Agent non affecté</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-plus text-blue-600 text-sm"></i>
+        <span class="text-gray-600">Affecter un quartier</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-pencil text-orange-600 text-sm"></i>
+        <span class="text-gray-600">Modifier l'affectation</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-trash text-red-600 text-sm"></i>
+        <span class="text-gray-600">Retirer l'affectation</span>
+      </div>
+    </div>
+  </div>
+</div>
