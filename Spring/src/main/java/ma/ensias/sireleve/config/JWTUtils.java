@@ -27,7 +27,7 @@ public class JWTUtils {
                 .subject(id.toString())
                 .claim("userName", userName)
                 .claim("userEmail", userEmail)
-                .claim("roles", roles.name())
+                .claim("roles", java.util.List.of(roles.name().replace("ROLE_", "")))
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims))
                 .getTokenValue();

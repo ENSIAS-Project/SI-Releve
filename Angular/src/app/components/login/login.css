@@ -1,0 +1,52 @@
+:host ::ng-deep .p-inputtext {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+:host ::ng-deep .p-inputtext:enabled:hover {
+  border-color: #818cf8;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+:host ::ng-deep .p-inputtext.ng-invalid.ng-dirty {
+  border-color: #ef4444;
+}
+
+:host ::ng-deep .p-button {
+  transition: all 0.2s;
+}
+
+:host ::ng-deep .p-checkbox .p-checkbox-box {
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+}
+
+:host ::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+:host ::ng-deep .p-toast {
+  z-index: 9999;
+}
+
+/* Animation for form appearance */
+.bg-white {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
