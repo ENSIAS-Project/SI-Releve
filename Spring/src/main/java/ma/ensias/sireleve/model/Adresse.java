@@ -15,7 +15,7 @@ public class Adresse {
     @Column(nullable = false)
     private String adresseComplete;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true) //todo: fix it when adding a new compteur
     @JoinColumn(name = "id_quartier")
     private Quartier quartier;
 }

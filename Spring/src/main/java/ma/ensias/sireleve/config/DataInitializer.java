@@ -1,11 +1,18 @@
 package ma.ensias.sireleve.config;
 
 import lombok.AllArgsConstructor;
+import ma.ensias.sireleve.enumz.CompteurType;
 import ma.ensias.sireleve.enumz.Roles;
 import ma.ensias.sireleve.model.Utilisateur;
 import ma.ensias.sireleve.model.Client;
+import ma.ensias.sireleve.model.Compteur;
+import ma.ensias.sireleve.model.Adresse;
+import ma.ensias.sireleve.model.Quartier;
 import ma.ensias.sireleve.repository.UtilisateurRepository;
 import ma.ensias.sireleve.repository.ClientRepository;
+import ma.ensias.sireleve.repository.CompteurRepository;
+import ma.ensias.sireleve.repository.AdresseRepository;
+import ma.ensias.sireleve.repository.QuartierRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,6 +28,9 @@ public class DataInitializer implements CommandLineRunner {
     private final UtilisateurRepository utilisateurRepository;
     private final PasswordEncoder passwordEncoder;
     private final ClientRepository clientRepository;
+    private final QuartierRepository quartierRepository;
+    private final AdresseRepository adresseRepository;
+    private final CompteurRepository compteurRepository;
 
     @Override
     @Transactional
@@ -143,5 +153,62 @@ public class DataInitializer implements CommandLineRunner {
 
         clientRepository.saveAll(clients);
         System.out.println(clientRepository.count() + " clients créés.");
+        
+        // --- Ajout de quartiers et adresses factices ---
+        Quartier q1 = new Quartier();
+        q1.setNomQuartier("Centre-ville");
+
+        Quartier q2 = new Quartier();
+        q2.setNomQuartier("Hay Riadh");
+
+        quartierRepository.save(q1);
+        quartierRepository.save(q2);
+
+        Adresse a1 = new Adresse();
+        a1.setAdresseComplete("12 Rue des Orangers, Casablanca");
+        a1.setQuartier(q1);
+
+        Adresse a2 = new Adresse();
+        a2.setAdresseComplete("45 Boulevard Hassan II, Rabat");
+        a2.setQuartier(q2);
+
+        Adresse a3 = new Adresse();
+        a3.setAdresseComplete("7 Avenue Mohammed V, Marrakech");
+        a3.setQuartier(q1);
+
+        adresseRepository.save(a1);
+        adresseRepository.save(a2);
+        adresseRepository.save(a3);
+
+        // --- Ajout de compteurs factices associés aux clients et adresses ---
+        List<Compteur> compteurs = new ArrayList<>();
+
+        Compteur comp1 = new Compteur();
+        comp1.setTypeCompteur(CompteurType
+        .EAU);
+        comp1.setClient(clients.get(0));
+        comp1.setAdresse(a1);
+        compteurs.add(comp1);
+
+        Compteur comp2 = new Compteur();
+        comp2.setTypeCompteur(CompteurType.ELECTRICITE);
+        comp2.setClient(clients.get(1));
+        comp2.setAdresse(a2);
+        compteurs.add(comp2);
+
+        Compteur comp3 = new Compteur();
+        comp3.setTypeCompteur(CompteurType.EAU);
+        comp3.setClient(clients.get(2));
+        comp3.setAdresse(a3);
+        compteurs.add(comp3);
+
+        Compteur comp4 = new Compteur();
+        comp4.setTypeCompteur(CompteurType.ELECTRICITE);
+        comp4.setClient(clients.get(3));
+        comp4.setAdresse(a1);
+        compteurs.add(comp4);
+
+        compteurRepository.saveAll(compteurs);
+        System.out.println(compteurRepository.count() + " compteurs créés.");
     }
 }
