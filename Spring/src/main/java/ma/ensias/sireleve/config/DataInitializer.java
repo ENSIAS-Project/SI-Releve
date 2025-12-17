@@ -3,7 +3,9 @@ package ma.ensias.sireleve.config;
 import lombok.AllArgsConstructor;
 import ma.ensias.sireleve.enumz.Roles;
 import ma.ensias.sireleve.model.Utilisateur;
+import ma.ensias.sireleve.model.Client;
 import ma.ensias.sireleve.repository.UtilisateurRepository;
+import ma.ensias.sireleve.repository.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UtilisateurRepository utilisateurRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ClientRepository clientRepository;
 
     @Override
     @Transactional
@@ -107,8 +110,38 @@ public class DataInitializer implements CommandLineRunner {
 
         // Persister tous les utilisateurs en une seule transaction
         utilisateurRepository.saveAll(utilisateurs);
-
         System.out.println("Initialisation terminée avec succès!");
         System.out.println(utilisateurRepository.count() + " utilisateurs créés:");
+
+        // --- Ajout de clients factices ---
+        List<Client> clients = new ArrayList<>();
+
+        Client c1 = new Client();
+        c1.setNomClient("Ben");
+        c1.setPrenomClient("Hassan");
+        clients.add(c1);
+
+        Client c2 = new Client();
+        c2.setNomClient("El");
+        c2.setPrenomClient("Amina");
+        clients.add(c2);
+
+        Client c3 = new Client();
+        c3.setNomClient("Khalid");
+        c3.setPrenomClient("Karim");
+        clients.add(c3);
+
+        Client c4 = new Client();
+        c4.setNomClient("Rachid");
+        c4.setPrenomClient("Salma");
+        clients.add(c4);
+
+        Client c5 = new Client();
+        c5.setNomClient("Nouri");
+        c5.setPrenomClient("Lina");
+        clients.add(c5);
+
+        clientRepository.saveAll(clients);
+        System.out.println(clientRepository.count() + " clients créés.");
     }
 }
