@@ -1,6 +1,7 @@
 package ma.ensias.sireleve.config;
 
 import lombok.AllArgsConstructor;
+import ma.ensias.sireleve.enumz.CompteurType;
 import ma.ensias.sireleve.enumz.Roles;
 import ma.ensias.sireleve.model.*;
 import ma.ensias.sireleve.repository.*;
@@ -114,7 +115,6 @@ public class DataInitializer implements CommandLineRunner {
 
         // Persister tous les utilisateurs en une seule transaction
         utilisateurRepository.saveAll(utilisateurs);
-
         // Quartiers
         List<Quartier> quartiers = new ArrayList<>();
         String[] nomsQuartiers = {"Centre Ville", "Agdal", "Hay Riad", "Océan", "Souissi", 
@@ -158,7 +158,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // Compteurs
         List<Compteur> compteurs = new ArrayList<>();
-        String[] types = {"EAU", "ELECTRICITE"};
+        CompteurType[] types = {CompteurType.EAU, CompteurType.ELECTRICITE};
         for (int i = 0; i < 10; i++) {
             Compteur compteur = new Compteur();
             compteur.setTypeCompteur(types[i % 2]);
