@@ -1,18 +1,17 @@
-// src/app/app-routing.module.ts (ou app.routes.ts pour standalone)
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login';
 import { AuthGuard } from './guards/auth-guard';
+import { AdminComponent } from './components/admin-component/admin-component';
 
 export const routes: Routes = [
   { 
     path: 'login', 
     component: LoginComponent 
   },
-  { 
-    path: 'dashboard', 
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./components/login/login').then(m => m.LoginComponent)
-  },
+ {
+  path: 'admin/dashboard',
+  component: AdminComponent,
+ },
 //   { 
 //     path: 'admin/dashboard', 
 //     canActivate: [AuthGuard],

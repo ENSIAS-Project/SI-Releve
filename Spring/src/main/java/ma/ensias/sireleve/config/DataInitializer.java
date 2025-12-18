@@ -3,21 +3,14 @@ package ma.ensias.sireleve.config;
 import lombok.AllArgsConstructor;
 import ma.ensias.sireleve.enumz.CompteurType;
 import ma.ensias.sireleve.enumz.Roles;
-import ma.ensias.sireleve.model.Utilisateur;
-import ma.ensias.sireleve.model.Client;
-import ma.ensias.sireleve.model.Compteur;
-import ma.ensias.sireleve.model.Adresse;
-import ma.ensias.sireleve.model.Quartier;
-import ma.ensias.sireleve.repository.UtilisateurRepository;
-import ma.ensias.sireleve.repository.ClientRepository;
-import ma.ensias.sireleve.repository.CompteurRepository;
-import ma.ensias.sireleve.repository.AdresseRepository;
-import ma.ensias.sireleve.repository.QuartierRepository;
+import ma.ensias.sireleve.model.*;
+import ma.ensias.sireleve.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +19,13 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final UtilisateurRepository utilisateurRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ClientRepository clientRepository;
     private final QuartierRepository quartierRepository;
+    private final ClientRepository clientRepository;
     private final AdresseRepository adresseRepository;
     private final CompteurRepository compteurRepository;
+    private final AgentRepository agentRepository;
+    private final ReleveRepository releveRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -120,95 +115,99 @@ public class DataInitializer implements CommandLineRunner {
 
         // Persister tous les utilisateurs en une seule transaction
         utilisateurRepository.saveAll(utilisateurs);
-        System.out.println("Initialisation terminée avec succès!");
-        System.out.println(utilisateurRepository.count() + " utilisateurs créés:");
+        // Quartiers
+        List<Quartier> quartiers = new ArrayList<>();
+        String[] nomsQuartiers = {"Centre Ville", "Agdal", "Hay Riad", "Océan", "Souissi", 
+                                   "Hassan", "Aviation", "Akkari", "Yacoub El Mansour", "Guich Oudaya"};
+        for (String nom : nomsQuartiers) {
+            Quartier quartier = new Quartier();
+            quartier.setNomQuartier(nom);
+            quartiers.add(quartier);
+        }
+        quartierRepository.saveAll(quartiers);
 
-        // --- Ajout de clients factices ---
+        // Clients
         List<Client> clients = new ArrayList<>();
-
-        Client c1 = new Client();
-        c1.setNomClient("Ben");
-        c1.setPrenomClient("Hassan");
-        clients.add(c1);
-
-        Client c2 = new Client();
-        c2.setNomClient("El");
-        c2.setPrenomClient("Amina");
-        clients.add(c2);
-
-        Client c3 = new Client();
-        c3.setNomClient("Khalid");
-        c3.setPrenomClient("Karim");
-        clients.add(c3);
-
-        Client c4 = new Client();
-        c4.setNomClient("Rachid");
-        c4.setPrenomClient("Salma");
-        clients.add(c4);
-
-        Client c5 = new Client();
-        c5.setNomClient("Nouri");
-        c5.setPrenomClient("Lina");
-        clients.add(c5);
-
+        String[][] clientsData = {
+            {"Alami", "Hassan"}, {"Benani", "Fatima"}, {"Chraibi", "Ahmed"},
+            {"Drissi", "Laila"}, {"El Fassi", "Omar"}, {"Ghali", "Nadia"},
+            {"Hamidi", "Rachid"}, {"Idrissi", "Sanaa"}, {"Jilali", "Karim"},
+            {"Kettani", "Samira"}
+        };
+        for (String[] data : clientsData) {
+            Client client = new Client();
+            client.setNomClient(data[0]);
+            client.setPrenomClient(data[1]);
+            clients.add(client);
+        }
         clientRepository.saveAll(clients);
-        System.out.println(clientRepository.count() + " clients créés.");
-        
-        // --- Ajout de quartiers et adresses factices ---
-        Quartier q1 = new Quartier();
-        q1.setNomQuartier("Centre-ville");
 
-        Quartier q2 = new Quartier();
-        q2.setNomQuartier("Hay Riadh");
+        // Adresses
+        List<Adresse> adresses = new ArrayList<>();
+        String[] rues = {"15 Rue Mohammed V", "27 Avenue Hassan II", "42 Boulevard Zerktouni",
+                        "8 Rue Taha Hussein", "63 Avenue des FAR", "19 Rue Ibn Batouta",
+                        "34 Avenue Al Massira", "51 Rue Oued Fes", "12 Boulevard Anfa",
+                        "76 Rue Al Jazira"};
+        for (int i = 0; i < 10; i++) {
+            Adresse adresse = new Adresse();
+            adresse.setAdresseComplete(rues[i]);
+            adresse.setQuartier(quartiers.get(i));
+            adresses.add(adresse);
+        }
+        adresseRepository.saveAll(adresses);
 
-        quartierRepository.save(q1);
-        quartierRepository.save(q2);
-
-        Adresse a1 = new Adresse();
-        a1.setAdresseComplete("12 Rue des Orangers, Casablanca");
-        a1.setQuartier(q1);
-
-        Adresse a2 = new Adresse();
-        a2.setAdresseComplete("45 Boulevard Hassan II, Rabat");
-        a2.setQuartier(q2);
-
-        Adresse a3 = new Adresse();
-        a3.setAdresseComplete("7 Avenue Mohammed V, Marrakech");
-        a3.setQuartier(q1);
-
-        adresseRepository.save(a1);
-        adresseRepository.save(a2);
-        adresseRepository.save(a3);
-
-        // --- Ajout de compteurs factices associés aux clients et adresses ---
+        // Compteurs
         List<Compteur> compteurs = new ArrayList<>();
-
-        Compteur comp1 = new Compteur();
-        comp1.setTypeCompteur(CompteurType
-        .EAU);
-        comp1.setClient(clients.get(0));
-        comp1.setAdresse(a1);
-        compteurs.add(comp1);
-
-        Compteur comp2 = new Compteur();
-        comp2.setTypeCompteur(CompteurType.ELECTRICITE);
-        comp2.setClient(clients.get(1));
-        comp2.setAdresse(a2);
-        compteurs.add(comp2);
-
-        Compteur comp3 = new Compteur();
-        comp3.setTypeCompteur(CompteurType.EAU);
-        comp3.setClient(clients.get(2));
-        comp3.setAdresse(a3);
-        compteurs.add(comp3);
-
-        Compteur comp4 = new Compteur();
-        comp4.setTypeCompteur(CompteurType.ELECTRICITE);
-        comp4.setClient(clients.get(3));
-        comp4.setAdresse(a1);
-        compteurs.add(comp4);
-
+        CompteurType[] types = {CompteurType.EAU, CompteurType.ELECTRICITE};
+        for (int i = 0; i < 10; i++) {
+            Compteur compteur = new Compteur();
+            compteur.setTypeCompteur(types[i % 2]);
+            compteur.setClient(clients.get(i));
+            compteur.setAdresse(adresses.get(i));
+            compteurs.add(compteur);
+        }
         compteurRepository.saveAll(compteurs);
-        System.out.println(compteurRepository.count() + " compteurs créés.");
+
+        // Agents
+        List<Agent> agents = new ArrayList<>();
+        String[][] agentsData = {
+            {"Amrani", "Youssef", "0612345678"}, {"Berrada", "Imane", "0623456789"},
+            {"Chakir", "Mehdi", "0634567890"}, {"Daoud", "Sofia", "0645678901"},
+            {"Elidrissi", "Amine", "0656789012"}, {"Filali", "Hind", "0667890123"},
+            {"Guerraoui", "Tarik", "0678901234"}, {"Houda", "Zineb", "0689012345"},
+            {"Jaidi", "Samir", "0690123456"}, {"Kabbaj", "Leila", "0601234567"}
+        };
+        for (int i = 0; i < 10; i++) {
+            Agent agent = new Agent();
+            agent.setNom(agentsData[i][0]);
+            agent.setPrenom(agentsData[i][1]);
+            agent.setTelProfessionnel(agentsData[i][2]);
+            agent.setQuartier(quartiers.get(i));
+            agents.add(agent);
+        }
+        agentRepository.saveAll(agents);
+
+        // Relevés
+        List<Releve> releves = new ArrayList<>();
+        LocalDate baseDate = LocalDate.of(2025, 11, 1);
+        
+        for (int i = 0; i < 12; i++) {
+            Releve releve = new Releve();
+            releve.setDateReleve(baseDate.plusDays(i * 5));
+            releve.setIndex(1000 + (i * 50) + (i % 3 * 10));
+            releve.setCompteur(compteurs.get(i % 10));
+            releve.setAgent(agents.get(i % 10));
+            releves.add(releve);
+        }
+        releveRepository.saveAll(releves);
+
+        System.out.println("Initialisation terminée avec succès!");
+        System.out.println(utilisateurRepository.count() + " utilisateurs créés");
+        System.out.println(quartierRepository.count() + " quartiers créés");
+        System.out.println(clientRepository.count() + " clients créés");
+        System.out.println(adresseRepository.count() + " adresses créées");
+        System.out.println(compteurRepository.count() + " compteurs créés");
+        System.out.println(agentRepository.count() + " agents créés");
+        System.out.println(releveRepository.count() + " relevés créés");
     }
 }
