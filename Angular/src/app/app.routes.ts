@@ -10,7 +10,7 @@ export const routes: Routes = [
     component: LoginComponent 
   },
   {
-    path: 'agent/affectation',
+    path: 'agent-affectation',
     component:AgentAffectationComponent,
   },
  {

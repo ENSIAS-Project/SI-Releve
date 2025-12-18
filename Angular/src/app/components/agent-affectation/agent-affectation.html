@@ -35,34 +35,34 @@
 
         <ng-template pTemplate="body" let-agent>
           <tr>
-            <td>{{ agent.id_agent }}</td>
+            <td>{{ agent.idAgent }}</td>
             <td class="font-medium">{{ agent.nom }}</td>
             <td>{{ agent.prenom }}</td>
             <td>
               <span class="flex items-center gap-1">
                 <i class="pi pi-phone text-gray-500 text-sm"></i>
-                {{ agent.tel_personnel }}
+                {{ agent.telPersonnel }}
               </span>
             </td>
             <td>
               <span class="flex items-center gap-1">
                 <i class="pi pi-phone text-blue-500 text-sm"></i>
-                {{ agent.tel_professionnel }}
+                {{ agent.telProfessionnel }}
               </span>
             </td>
             
             <!-- Colonne Quartier avec gestion d'édition -->
             <td>
-              <div *ngIf="editingAgent !== agent.id_agent">
+              <div *ngIf="editingAgent !== agent.idAgent">
                 <span 
-                  *ngIf="agent.nom_quartier" 
+                  *ngIf="agent.nomQuartier" 
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                 >
                   <i class="pi pi-map-marker mr-1 text-xs"></i>
-                  {{ agent.nom_quartier }}
+                  {{ agent.nomQuartier }}
                 </span>
                 <span 
-                  *ngIf="!agent.nom_quartier" 
+                  *ngIf="!agent.nomQuartier" 
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600"
                 >
                   <i class="pi pi-times-circle mr-1 text-xs"></i>
@@ -71,19 +71,19 @@
               </div>
 
               <!-- Mode édition avec select natif stylisé -->
-              <div *ngIf="editingAgent === agent.id_agent" class="flex items-center gap-2">
+              <div *ngIf="editingAgent === agent.idAgent" class="flex items-center gap-2">
                 <div class="custom-select-wrapper w-full">
                   <i class="pi pi-map-marker select-icon"></i>
                   <select 
-                    [(ngModel)]="selectedQuartier[agent.id_agent]"
+                    [(ngModel)]="selectedQuartier[agent.idAgent]"
                     class="custom-select w-full"
                   >
                     <option [ngValue]="null" disabled selected>Sélectionnez un quartier</option>
                     <option 
                       *ngFor="let quartier of getQuartiersDisponibles()" 
-                      [ngValue]="quartier.id_quartier"
+                      [ngValue]="quartier.idQuartier"
                     >
-                      {{ quartier.nom_quartier }}
+                      {{ quartier.nomQuartier }}
                     </option>
                   </select>
                   <i class="pi pi-chevron-down select-arrow"></i>
@@ -95,9 +95,9 @@
             <td>
               <div class="flex justify-center gap-2">
                 <!-- Mode normal -->
-                <div *ngIf="editingAgent !== agent.id_agent" class="flex gap-2">
+                <div *ngIf="editingAgent !== agent.idAgent" class="flex gap-2">
                   <button 
-                    *ngIf="!agent.nom_quartier"
+                    *ngIf="!agent.nomQuartier"
                     pButton 
                     label="Affecter"
                     icon="pi pi-plus-circle"
@@ -108,7 +108,7 @@
                   ></button>
 
                   <button 
-                    *ngIf="agent.nom_quartier"
+                    *ngIf="agent.nomQuartier"
                     pButton 
                     label="Modifier"
                     icon="pi pi-pencil"
@@ -119,7 +119,7 @@
                   ></button>
 
                   <button 
-                    *ngIf="agent.nom_quartier"
+                    *ngIf="agent.nomQuartier"
                     pButton 
                     label="Retirer"
                     icon="pi pi-times-circle"
@@ -131,7 +131,7 @@
                 </div>
 
                 <!-- Mode édition -->
-                <div *ngIf="editingAgent === agent.id_agent" class="flex gap-2">
+                <div *ngIf="editingAgent === agent.idAgent" class="flex gap-2">
                   <button 
                     pButton 
                     label="Valider"

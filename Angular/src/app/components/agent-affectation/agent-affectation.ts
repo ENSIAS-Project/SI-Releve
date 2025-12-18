@@ -9,20 +9,8 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 
-interface Agent {
-  id_agent: number;
-  nom: string;
-  prenom: string;
-  tel_personnel: string;
-  tel_professionnel: string;
-  nom_quartier: string | null;
-  id_quartier: number | null;
-}
-
-interface Quartier {
-  id_quartier: number;
-  nom_quartier: string;
-}
+// Service
+import { AgentService, Agent, Quartier } from '../../services/agent.service';
 
 @Component({
   selector: 'app-agent-affectation',
@@ -44,86 +32,91 @@ export class AgentAffectationComponent implements OnInit {
   quartiers: Quartier[] = [];
   selectedQuartier: { [key: number]: number | null } = {};
   editingAgent: number | null = null;
+  loading: boolean = false;
+  
+  // Pagination
+  totalRecords: number = 0;
+  currentPage: number = 0;
+  pageSize: number = 10;
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private agentService: AgentService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.loadFakeData();
+    this.loadAgents();
+    this.loadQuartiers();
   }
 
-  loadFakeData(): void {
-    // Fake data pour les quartiers
-    this.quartiers = [
-      { id_quartier: 1, nom_quartier: 'Centre Ville' },
-      { id_quartier: 2, nom_quartier: 'Zone Industrielle' },
-      { id_quartier: 3, nom_quartier: 'Quartier Résidentiel Nord' },
-      { id_quartier: 4, nom_quartier: 'Quartier Résidentiel Sud' },
-      { id_quartier: 5, nom_quartier: 'Zone Commerciale' },
-      { id_quartier: 6, nom_quartier: 'Quartier des Affaires' }
-    ];
+  /**
+   * Charge la liste des agents depuis le backend
+   */
+  loadAgents(page: number = 0, size: number = 10): void {
+    this.loading = true;
+    
+    this.agentService.getAgents(page, size).subscribe({
+      next: (response) => {
+        this.agents = response.content;
+        this.totalRecords = response.totalElements;
+        this.currentPage = response.number;
+        this.pageSize = response.size;
+        this.loading = false;
+      },
+     
+    });
+  }
 
-    // Fake data pour les agents
-    this.agents = [
-      {
-        id_agent: 1,
-        nom: 'Alami',
-        prenom: 'Hassan',
-        tel_personnel: '0612345678',
-        tel_professionnel: '0523456789',
-        nom_quartier: 'Centre Ville',
-        id_quartier: 1
+  /**
+   * Charge la liste des quartiers depuis le backend
+   */
+  loadQuartiers(): void {
+    this.agentService.getQuartiers().subscribe({
+      next: (quartiers) => {
+        this.quartiers = quartiers;
       },
-      {
-        id_agent: 2,
-        nom: 'Bennani',
-        prenom: 'Fatima',
-        tel_personnel: '0698765432',
-        tel_professionnel: '0523456790',
-        nom_quartier: 'Zone Industrielle',
-        id_quartier: 2
-      },
-      {
-        id_agent: 3,
-        nom: 'Chakir',
-        prenom: 'Mohamed',
-        tel_personnel: '0656789012',
-        tel_professionnel: '0523456791',
-        nom_quartier: null,
-        id_quartier: null
-      },
-      {
-        id_agent: 4,
-        nom: 'El Amrani',
-        prenom: 'Amina',
-        tel_personnel: '0634567890',
-        tel_professionnel: '0523456792',
-        nom_quartier: 'Quartier Résidentiel Nord',
-        id_quartier: 3
-      },
-      {
-        id_agent: 5,
-        nom: 'Fassi',
-        prenom: 'Youssef',
-        tel_personnel: '0645678901',
-        tel_professionnel: '0523456793',
-        nom_quartier: null,
-        id_quartier: null
+      error: (error) => {
+        console.error('Erreur lors du chargement des quartiers:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger la liste des quartiers'
+        });
       }
-    ];
+    });
   }
 
+  /**
+   * Gestion du changement de page dans le tableau
+   */
+  onPageChange(event: any): void {
+    const page = event.first / event.rows;
+    this.loadAgents(page, event.rows);
+  }
+
+  /**
+   * Démarre l'édition d'un agent
+   */
   startEdit(agent: Agent): void {
-    this.editingAgent = agent.id_agent;
-    this.selectedQuartier[agent.id_agent] = agent.id_quartier;
+    this.editingAgent = agent.idAgent;
+    // Trouver l'ID du quartier actuel si l'agent est déjà affecté
+    const quartier = this.quartiers.find(q => q.nomQuartier === agent.nomQuartier);
+    this.selectedQuartier[agent.idAgent] = quartier?.idQuartier || null;
   }
 
+  /**
+   * Annule l'édition
+   */
   cancelEdit(): void {
     this.editingAgent = null;
     this.selectedQuartier = {};
   }
 
+  /**
+   * Affecte un quartier à un agent
+   */
   affecterQuartier(agent: Agent): void {
-    const quartierSelectionne = this.selectedQuartier[agent.id_agent];
+    const quartierSelectionne = this.selectedQuartier[agent.idAgent];
     
     if (!quartierSelectionne) {
       this.messageService.add({
@@ -134,35 +127,74 @@ export class AgentAffectationComponent implements OnInit {
       return;
     }
 
-    // Trouver le nom du quartier
-    const quartier = this.quartiers.find(q => q.id_quartier === quartierSelectionne);
+    this.loading = true;
     
-    if (quartier) {
-      agent.id_quartier = quartier.id_quartier;
-      agent.nom_quartier = quartier.nom_quartier;
-      
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: `L'agent ${agent.prenom} ${agent.nom} a été affecté au quartier ${quartier.nom_quartier}`
-      });
-      
-      this.editingAgent = null;
-      this.selectedQuartier[agent.id_agent] = null;
-    }
-  }
-
-  retirerAffectation(agent: Agent): void {
-    agent.id_quartier = null;
-    agent.nom_quartier = null;
-    
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Information',
-      detail: `L'affectation de l'agent ${agent.prenom} ${agent.nom} a été retirée`
+    this.agentService.affecterQuartier(agent.idAgent, quartierSelectionne).subscribe({
+      next: (updatedAgent) => {
+        // Mettre à jour l'agent dans la liste locale
+        const index = this.agents.findIndex(a => a.idAgent === agent.idAgent);
+        if (index !== -1) {
+          this.agents[index] = updatedAgent;
+        }
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: `L'agent ${updatedAgent.prenom} ${updatedAgent.nom} a été affecté au quartier ${updatedAgent.nomQuartier}`
+        });
+        
+        this.editingAgent = null;
+        this.selectedQuartier[agent.idAgent] = null;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors de l\'affectation:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: error.error?.message || 'Impossible d\'affecter l\'agent au quartier'
+        });
+        this.loading = false;
+      }
     });
   }
 
+  /**
+   * Retire l'affectation d'un agent
+   */
+  retirerAffectation(agent: Agent): void {
+    this.loading = true;
+    
+    this.agentService.retirerAffectation(agent.idAgent).subscribe({
+      next: (updatedAgent) => {
+        // Mettre à jour l'agent dans la liste locale
+        const index = this.agents.findIndex(a => a.idAgent === agent.idAgent);
+        if (index !== -1) {
+          this.agents[index] = updatedAgent;
+        }
+        
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Information',
+          detail: `L'affectation de l'agent ${updatedAgent.prenom} ${updatedAgent.nom} a été retirée`
+        });
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du retrait de l\'affectation:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: error.error?.message || 'Impossible de retirer l\'affectation'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  /**
+   * Retourne la liste des quartiers disponibles
+   */
   getQuartiersDisponibles(): Quartier[] {
     return this.quartiers;
   }
