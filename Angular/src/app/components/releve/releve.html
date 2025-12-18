@@ -1,0 +1,97 @@
+<div class="admin-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h1>
+      <i class="pi pi-file-pdf"></i>
+      Relevés des Compteurs
+    </h1>
+    <p class="subtitle">Consultez tous les relevés des compteurs clients</p>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters">
+    <button 
+      *ngFor="let type of compteurTypes"
+      class="filter-btn"
+      [class.active]="selectedCompteurType === type.value"
+      (click)="selectedCompteurType = type.value; onFilterChange()"
+    >
+      <i *ngIf="type.value === 'TOUS'" class="pi pi-list"></i>
+      <i *ngIf="type.value === 'EAU'" class="pi pi-droplet"></i>
+      <i *ngIf="type.value === 'ELECTRICITE'" class="pi pi-bolt"></i>
+      {{ type.label }}
+    </button>
+  </div>
+
+  <!-- Table Container -->
+  <div class="table-container">
+    <!-- Tableau avec PrimeNG -->
+    <p-table 
+      [value]="getReleves()" 
+      [tableStyle]="{ 'width': '100%' }"
+      styleClass="users-table"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} relevés"
+      [loading]="loading"
+    >
+      <!-- En-tête du tableau -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Client</th>
+          <th>Type de Compteur</th>
+          <th>Adresse</th>
+          <th>Consommation</th>
+          <th>Date du Relevé</th>
+        </tr>
+      </ng-template>
+
+      <!-- Corps du tableau -->
+      <ng-template pTemplate="body" let-releve>
+        <tr>
+          <td class="font-weight-bold">{{ releve.labelClient }}</td>
+          <td>
+            <p-tag 
+              [value]="releve.typeCompteur" 
+              [severity]="getCompteurBadgeSeverity(releve.typeCompteur)"
+              [style]="{'font-size': '12px'}"
+            ></p-tag>
+          </td>
+          <td>
+            <span class="flex-center">
+              <i class="pi pi-map-marker"></i>
+              {{ releve.adresse }}
+            </span>
+          </td>
+          <td>
+            <span class="consommation-badge">
+              <i class="pi pi-bolt"></i>
+              {{ releve.consommation | number:'1.2-2' }} kWh
+            </span>
+          </td>
+          <td>
+            <span class="date-badge">
+              <i class="pi pi-calendar"></i>
+              {{ formatDate(releve.dateReleve) }}
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Message vide -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="no-data">
+            <i class="pi pi-inbox"></i>
+            Aucun relevé trouvé
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Toast pour les notifications -->
+<p-toast position="top-right"></p-toast>

@@ -3,6 +3,7 @@ import { LoginComponent } from './components/login/login';
 import { AuthGuard } from './guards/auth-guard';
 import { AdminComponent } from './components/admin-component/admin-component';
 import { AgentAffectationComponent } from './components/agent-affectation/agent-affectation';
+import { ReleveComponent } from './components/releve/releve';
 
 export const routes: Routes = [
   { 
@@ -16,6 +17,11 @@ export const routes: Routes = [
  {
   path: 'admin/dashboard',
   component: AdminComponent,
+ },
+
+ {
+  path: 'releve',
+  component: ReleveComponent,
  },
 //   { 
 //     path: 'admin/dashboard', 
