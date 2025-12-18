@@ -1,0 +1,140 @@
+<div class="admin-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h1>
+      <i class="pi pi-users"></i>
+      Affectation des Quartiers aux Agents
+    </h1>
+    <p class="subtitle">Gérez les affectations des agents aux différents quartiers</p>
+  </div>
+
+  <!-- Table Container -->
+  <div class="table-container">
+    <!-- Tableau avec PrimeNG -->
+    <p-table 
+      [value]="agents" 
+      [tableStyle]="{ 'width': '100%' }"
+      styleClass="users-table"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} agents"
+      [loading]="loading"
+    >
+      <!-- En-tête du tableau -->
+      <ng-template pTemplate="header">
+        <tr>
+        
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Tél. Professionnel</th>
+          <th>Quartier Affecté</th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+
+      <!-- Corps du tableau -->
+      <ng-template pTemplate="body" let-agent>
+        <tr>
+          <td class="font-weight-bold">{{ agent.nom }}</td>
+          <td>{{ agent.prenom }}</td>
+          <td>
+            <span class="flex-center">
+              <i class="pi pi-phone"></i>
+              {{ agent.telProfessionnel }}
+            </span>
+          </td>
+          
+          <!-- Colonne Quartier -->
+          <td>
+            <div *ngIf="editingAgent !== agent.idAgent">
+              <span 
+                *ngIf="agent.nomQuartier" 
+                class="role-badge quartier-badge"
+              >
+                <i class="pi pi-map-marker"></i>
+                {{ agent.nomQuartier }}
+              </span>
+              <span 
+                *ngIf="!agent.nomQuartier" 
+                class="role-badge non-affecte"
+              >
+                <i class="pi pi-times-circle"></i>
+                Non affecté
+              </span>
+            </div>
+
+            <!-- Mode édition -->
+            <div *ngIf="editingAgent === agent.idAgent" class="edit-mode">
+              <select 
+                [(ngModel)]="selectedQuartier[agent.idAgent]"
+                class="form-control"
+              >
+                <option [ngValue]="null" disabled>Sélectionnez un quartier</option>
+                <option 
+                  *ngFor="let quartier of getQuartiersDisponibles()" 
+                  [ngValue]="quartier.idQuartier"
+                >
+                  {{ quartier.nomQuartier }}
+                </option>
+              </select>
+            </div>
+          </td>
+
+          <!-- Colonne Actions -->
+          <td>
+            <div class="action-buttons">
+              <!-- Mode normal -->
+              <ng-container *ngIf="editingAgent !== agent.idAgent">
+                <button 
+                  class="btn-action btn-edit"
+                  title="Modifier l'affectation"
+                  (click)="startEdit(agent)"
+                >
+                  <i class="pi pi-pencil"></i>
+                  Modifier
+                </button>
+              </ng-container>
+
+              <!-- Mode édition -->
+              <ng-container *ngIf="editingAgent === agent.idAgent">
+                <button 
+                  class="btn-action btn-save"
+                  title="Confirmer"
+                  (click)="affecterQuartier(agent)"
+                  [disabled]="loading"
+                >
+                  <i class="pi pi-check"></i>
+                  Confirmer
+                </button>
+
+                <button 
+                  class="btn-action btn-cancel"
+                  title="Annuler"
+                  (click)="cancelEdit()"
+                  [disabled]="loading"
+                >
+                  <i class="pi pi-times"></i>
+                  Annuler
+                </button>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Message vide -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="no-data">
+            <i class="pi pi-inbox"></i>
+            Aucun agent trouvé
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-toast position="top-right"></p-toast>

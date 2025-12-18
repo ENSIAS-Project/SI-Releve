@@ -76,12 +76,15 @@ export class LoginComponent implements OnInit {
         });
         
         setTimeout(() => {
-          if (response.role === 'ROLE_SUPERADMIN') {
-            this.router.navigate(['admin/dashboard']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
-        }, 1000);
+  if (response.role === 'ROLE_SUPERADMIN') {
+    this.router.navigate(['admin/dashboard']);
+  } else if (response.role === 'ROLE_UTILISATEUR') {
+    this.router.navigate(['/agent-affectation']);
+  } else {
+    this.router.navigate(['/dashboard']);
+  }
+}, 1000);
+
       },
       error: (error) => {
         this.loading = false;
