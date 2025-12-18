@@ -42,7 +42,7 @@ export class CompteurComponent implements OnInit {
     {
       label: 'Gestion des relevés',
       icon: 'clipboard',
-      route: '/admin/releves' // Ajustez la route selon votre routing
+      route: '/admin-backoffice/releve'// Ajustez la route selon votre routing
     },
     {
       label: 'Affectation quartier',

@@ -4,6 +4,7 @@ import { AuthGuard } from './guards/auth-guard';
 import { AdminComponent } from './components/admin-component/admin-component';
 import { CompteurComponent } from './components/admin-backoffice/admin-back-compteur/admin-back-compteur'; 
 import { SidebarComponent } from './shared/sidebar-component/sidebar-component';
+import { ReleveComponent } from './components/admin-backoffice/releve-component/releve-component';
 
 export const routes: Routes = [
 
@@ -11,6 +12,12 @@ export const routes: Routes = [
     path: 'admin-backoffice/compteur', 
     component: CompteurComponent 
   },
+  
+  { 
+    path: 'admin-backoffice/releve', 
+    component: ReleveComponent 
+  },
+  
   
   {
   path: 'admin/dashboard',

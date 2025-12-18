@@ -1,0 +1,157 @@
+<div class="admin-container">
+  <!-- Sidebar pour Admin Backoffice -->
+  <app-sidebar 
+    [menuItems]="releveMenuItems"
+    [userRole]="userRole">
+  </app-sidebar>
+
+  <!-- Contenu principal -->
+  <main class="main-content">
+    <div class="releve-content">
+      <div class="header">
+        <h1>Gestion des Relevés</h1>
+        @if (showReleves && filteredReleves.length > 0) {
+          <button class="btn-export" (click)="exportToCSV()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Exporter CSV
+          </button>
+        }
+      </div>
+
+      <!-- Sélection de l'agent -->
+      <div class="selection-section">
+        <div class="selection-card">
+          <div class="card-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <h2>Sélectionner un agent de terrain</h2>
+          </div>
+          
+          <div class="card-body">
+            <div class="form-group">
+              <label for="agent">Agent & Quartier <span class="required">*</span></label>
+              <select 
+                id="agent" 
+                name="agent"
+                [(ngModel)]="selectedAgentId"
+                (change)="onAgentSelected()"
+                class="form-control select-agent">
+                <option value="0">-- Choisir un agent --</option>
+                @for (agent of agents; track agent.idAgent) {
+                  <option [value]="agent.idAgent">
+                    {{ getAgentDisplay(agent) }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            @if (selectedAgent) {
+              <div class="agent-info">
+                <div class="info-badge">
+                  <span class="info-label">Agent sélectionné :</span>
+                  <span class="info-value">{{ selectedAgent.prenom }} {{ selectedAgent.nom }}</span>
+                </div>
+                <div class="info-badge">
+                  <span class="info-label">Quartier assigné :</span>
+                  <span class="info-value">{{ selectedAgent.quartier }}</span>
+                </div>
+                <div class="info-badge">
+                  <span class="info-label">Nombre de relevés :</span>
+                  <span class="info-value">{{ filteredReleves.length }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Tableau des relevés (s'affiche dès qu'un agent est sélectionné) -->
+      @if (showReleves) {
+        <div class="table-container">
+          <div class="table-header-info">
+            <div class="info-section">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              <span class="table-title">Liste des relevés - {{ selectedAgent?.prenom }} {{ selectedAgent?.nom }}</span>
+            </div>
+            <div class="count-badge-header">
+              <span class="count">{{ filteredReleves.length }}</span>
+              <span class="label">relevé(s)</span>
+            </div>
+          </div>
+
+          <table class="releves-table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Adresse</th>
+                <th>Type Compteur</th>
+                <th>Index</th>
+                <th>Date & Heure de Relevé</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (releve of filteredReleves; track releve.idReleve) {
+                <tr>
+                  <td class="client-cell">
+                    <div class="client-info">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <span>{{ releve.clientNomComplet }}</span>
+                    </div>
+                  </td>
+                  <td class="address-cell">{{ releve.adresseClient }}</td>
+                  <td>
+                    <span class="type-badge" [class.eau]="releve.typeCompteur === 'EAU'" [class.electricite]="releve.typeCompteur === 'ELECTRICITE'">
+                      @if (releve.typeCompteur === 'EAU') {
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                        </svg>
+                      } @else {
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                      }
+                      {{ getTypeDisplay(releve.typeCompteur) }}
+                    </span>
+                  </td>
+                  <td class="index-cell">{{ releve.index }}</td>
+                  <td class="datetime-cell">
+                    <div class="datetime-info">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span class="datetime-value">{{ formatDateTime(releve.dateReleve) }}</span>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="no-data">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <p>Aucun relevé trouvé pour cet agent</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </main>
+</div>
