@@ -1,130 +1,262 @@
-/* src/app/components/agent-affectation/agent-affectation.component.css */
+/* Styles personnalisés pour le composant */
 
-/* Personnalisation des boutons PrimeNG */
-::ng-deep .p-button {
-  transition: all 0.3s ease;
+/* Amélioration du card */
+.card {
+  transition: box-shadow 0.3s ease;
 }
 
-::ng-deep .p-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Style pour le tableau PrimeNG */
+/* Style pour les en-têtes de tableau */
 ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  border: none;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
 }
 
+/* Style pour les lignes du tableau */
 ::ng-deep .p-datatable .p-datatable-tbody > tr {
   transition: background-color 0.2s ease;
 }
 
 ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
-  background-color: #eff6ff !important;
+  background-color: #f8fafc;
 }
 
-/* Style pour les cellules */
 ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
 }
 
-/* Dropdown dans le tableau */
+/* Style pour le dropdown */
 ::ng-deep .p-dropdown {
-  min-width: 200px;
-  border: 2px solid #e5e7eb;
-  transition: border-color 0.3s ease;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 ::ng-deep .p-dropdown:hover {
   border-color: #3b82f6;
 }
 
+::ng-deep .p-dropdown:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 ::ng-deep .p-dropdown-panel {
-  margin-top: 4px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* Pagination personnalisée */
-::ng-deep .p-paginator {
-  border: none;
-  background-color: transparent;
-  padding: 1rem;
-}
-
-::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
-  min-width: 2.5rem;
-  height: 2.5rem;
   border-radius: 0.5rem;
-  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:hover {
-  background-color: #dbeafe;
-  color: #1e40af;
+/* Style pour les boutons */
+::ng-deep .p-button.p-button-rounded {
+  width: 2.5rem;
+  height: 2.5rem;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .p-button.p-button-rounded:hover {
+  transform: scale(1.1);
+}
+
+::ng-deep .p-button.p-button-success {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+::ng-deep .p-button.p-button-success:hover {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+::ng-deep .p-button.p-button-warning {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+}
+
+::ng-deep .p-button.p-button-warning:hover {
+  background-color: #d97706;
+  border-color: #d97706;
+}
+
+::ng-deep .p-button.p-button-danger {
+  background-color: #ef4444;
+  border-color: #ef4444;
+}
+
+::ng-deep .p-button.p-button-danger:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+
+/* Style pour les badges de quartier */
+.inline-flex.items-center {
+  transition: all 0.2s ease;
+}
+
+.inline-flex.items-center:hover {
+  transform: translateY(-1px);
+}
+
+/* Style pour le paginator */
+::ng-deep .p-paginator {
+  background: #f8fafc;
+  border-radius: 0 0 0.5rem 0.5rem;
+  padding: 1rem;
 }
 
 ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
   background-color: #3b82f6;
-  color: white;
+  border-color: #3b82f6;
 }
 
-/* Toast personnalisé */
+/* Responsive */
+@media (max-width: 768px) {
+  ::ng-deep .p-datatable .p-datatable-thead > tr > th,
+  ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  ::ng-deep .p-button.p-button-rounded {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* Animation pour les messages toast */
 ::ng-deep .p-toast {
   z-index: 9999;
 }
 
 ::ng-deep .p-toast-message {
   border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Spinner de chargement */
-::ng-deep .p-progress-spinner {
-  width: 50px;
-  height: 50px;
+/* Style pour les icônes de téléphone */
+.pi-phone {
+  opacity: 0.7;
 }
 
-::ng-deep .p-progress-spinner-circle {
-  stroke: #3b82f6;
+/* Styles pour le conteneur du select personnalisé */
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
-/* Tooltip */
-::ng-deep .p-tooltip {
-  font-size: 0.875rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
+/* Icône à gauche du select */
+.custom-select-wrapper .select-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #3b82f6;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Flèche à droite du select */
+.custom-select-wrapper .select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 0.2s ease;
+}
+
+/* Rotation de la flèche quand le select est ouvert */
+.custom-select-wrapper select:focus ~ .select-arrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Styles du select natif */
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  padding: 10px 36px 10px 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: white;
+  
+  font-size: 14px;
+  color: #374151;
+  
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  outline: none;
+}
+
+/* Hover sur le select */
+.custom-select:hover {
+  border-color: #3b82f6;
+  background-color: #f9fafb;
+}
+
+/* Focus sur le select */
+.custom-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: white;
+}
+
+/* Style des options */
+.custom-select option {
+  padding: 10px;
+  background-color: white;
+  color: #374151;
+}
+
+.custom-select option:hover {
+  background-color: #eff6ff;
+}
+
+/* Style pour l'option disabled (placeholder) */
+.custom-select option:disabled {
+  color: #9ca3af;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.875rem;
+  .custom-select {
+    font-size: 13px;
+    padding: 8px 32px 8px 32px;
   }
-
-  ::ng-deep .p-dropdown {
-    min-width: 150px;
+  
+  .custom-select-wrapper .select-icon {
+    left: 10px;
+    font-size: 12px;
   }
-}
-
-/* Animation pour les badges de quartier */
-.inline-flex {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .custom-select-wrapper .select-arrow {
+    right: 10px;
+    font-size: 10px;
   }
 }
 
-/* Style pour les boutons d'action groupés */
-.flex.gap-2 button {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Animation de l'icône lors de la sélection */
+@keyframes iconPulse {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+.custom-select:focus ~ .select-icon {
+  animation: iconPulse 0.3s ease;
 }
