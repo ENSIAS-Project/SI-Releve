@@ -1,5 +1,15 @@
 <div class="admin-container">
-  <p-toast></p-toast>
+
+
+  <app-sidebar 
+    [menuItems]="superAdminMenuItems"
+    [userRole]="userRole">
+  </app-sidebar>
+  
+  <main class="main-container">
+
+
+    <p-toast></p-toast>
 
   <div class="header">
     <h1>Gestion des Utilisateurs</h1>
@@ -236,4 +246,6 @@
       </div>
     </div>
   }
+  </main>
+  
 </div>

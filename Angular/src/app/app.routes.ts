@@ -4,11 +4,14 @@ import { AuthGuard } from './guards/auth-guard';
 import { AdminComponent } from './components/admin-component/admin-component';
 import { AgentAffectationComponent } from './components/agent-affectation/agent-affectation';
 import { ReleveComponent } from './components/releve/releve';
+import { CompteurComponent } from './components/admin-backoffice/admin-back-compteur/admin-back-compteur'; 
+import { SidebarComponent } from './shared/sidebar-component/sidebar-component';
 
 export const routes: Routes = [
+
   { 
-    path: 'login', 
-    component: LoginComponent 
+    path: 'admin-backoffice/compteur', 
+    component: CompteurComponent 
   },
   {
     path: 'agent-affectation',
@@ -23,6 +26,19 @@ export const routes: Routes = [
   path: 'releve',
   component: ReleveComponent,
  },
+
+  { 
+    path: 'sidebar', 
+    component: SidebarComponent  
+  },
+
+  { 
+    path: 'login', 
+    component: LoginComponent 
+  },
+ 
+
+
 //   { 
 //     path: 'admin/dashboard', 
 //     canActivate: [AuthGuard],
