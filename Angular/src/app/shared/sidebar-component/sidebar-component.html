@@ -1,0 +1,54 @@
+<aside class="sidebar">
+  <!-- En-tête du sidebar -->
+  <div class="sidebar-header">
+    <div class="app-logo">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+    </div>
+    <h1 class="app-title">SI-Relevé</h1>
+    <p class="user-role">{{ getRoleDisplay() }}</p>
+  </div>
+
+  <!-- Navigation principale -->
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <!-- SIMPLE : Utilise directement menuItems passé par le parent -->
+      @for (item of menuItems; track item.route) {
+        <li class="nav-item">
+          <a 
+            class="nav-link" 
+            [routerLink]="item.route"
+            routerLinkActive="active">
+            
+            <!-- Les icônes restent les mêmes -->
+            @if (item.icon === 'users') {
+              <!-- Icône users -->
+            }
+            @if (item.icon === 'meter') {
+              <!-- Icône meter -->
+            }
+            @if (item.icon === 'clipboard') {
+              <!-- Icône clipboard -->
+            }
+            @if (item.icon === 'map') {
+              <!-- Icône map -->
+            }
+            
+            <span class="nav-text">{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Bouton de déconnexion (inchangé) -->
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <!-- SVG déconnexion -->
+      <span class="logout-text">Se déconnecter</span>
+    </button>
+  </div>
+</aside>

@@ -4,18 +4,38 @@ import { FormsModule } from '@angular/forms';
 import { UserService, UserResponseDto, UserCreateDto, UserUpdateDto, Roles } from '../../services/user.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { SidebarComponent } from '../../shared/sidebar-component/sidebar-component'; // Ajoutez cet import
+
+// Interface pour les items du menu (identique à celle du sidebar)
+interface MenuItem {
+  label: string;
+  icon: string;
+  route: string;
+}
 
 export type FilterType = 'all' | 'superadmin' | 'backoffice';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastModule],
+  imports: [CommonModule, FormsModule, ToastModule, SidebarComponent], // Ajoutez SidebarComponent ici
   providers: [MessageService],
   templateUrl: './admin-component.html',
   styleUrls: ['./admin-component.css']
 })
 export class AdminComponent implements OnInit {
+  // CONFIGURATION DU SIDEBAR POUR SUPER ADMIN
+  superAdminMenuItems: MenuItem[] = [
+    {
+      label: 'Gestion des utilisateurs',
+      icon: 'users',
+      route: '/admin/dashboard' // Ajustez selon votre routing
+    }
+  ];
+  
+  userRole = 'Super Administrateur';
+
+  // LOGIQUE MÉTIER EXISTANTE (INCHANGÉE)
   utilisateurs: UserResponseDto[] = [];
   filteredUtilisateurs: UserResponseDto[] = [];
   currentFilter: FilterType = 'all';
@@ -50,6 +70,8 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     this.loadUtilisateurs();
   }
+
+  // TOUTE VOTRE LOGIQUE MÉTIER EXISTANTE RESTE INCHANGÉE CI-DESSOUS
 
   loadUtilisateurs(page: number = 0, sort: string = 'nom,asc'): void {
     this.isLoading = true;
