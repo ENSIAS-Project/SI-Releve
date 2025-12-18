@@ -9,22 +9,18 @@ import { authInterceptor } from './interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // HTTP Client avec interceptor - DOIT ÊTRE EN PREMIER
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
     
-    // Router
     provideRouter(routes),
     
-    // PrimeNG
     providePrimeNG({
       theme: {
         preset: Aura
       }
     }),
     
-    // Error handling
     provideBrowserGlobalErrorListeners()
   ]
 };
