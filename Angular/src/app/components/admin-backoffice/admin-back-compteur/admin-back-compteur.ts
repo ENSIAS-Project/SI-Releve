@@ -1,23 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { SidebarComponent } from '../../../shared/sidebar-component/sidebar-component';
-
-export interface Client {
-  idClient: number;
-  nom: string;
-  prenom: string;
-}
-
-export interface Compteur {
-  idCompteur: number;
-  typeCompteur: 'EAU' | 'ELECTRICITE';
-  adresse: string;
-  client: Client;
-}
+import { CompteurService, Client, CompteurResponse, CreateCompteurRequest, CompteurType } from '../../../services/compteur.service';
 
 export type FilterTypeCompteur = 'all' | 'eau' | 'electricite';
 
-// Interface pour les items du menu (doit correspondre à celle du sidebar)
 interface MenuItem {
   label: string;
   icon: string;
@@ -27,211 +17,282 @@ interface MenuItem {
 @Component({
   selector: 'app-compteur',
   standalone: true,
-  imports: [FormsModule, SidebarComponent], // Ajoutez SidebarComponent ici
+  imports: [CommonModule, FormsModule, SidebarComponent, ToastModule],
+  providers: [MessageService],
   templateUrl: './admin-back-compteur.html',
   styleUrl: './admin-back-compteur.css'
 })
 export class CompteurComponent implements OnInit {
-  // Configuration du sidebar pour ce composant
+  // Configuration du sidebar
   compteurMenuItems: MenuItem[] = [
     {
       label: 'Gestion des compteurs',
       icon: 'meter',
-      route: '/admin-backoffice/compteur' // Ajustez la route selon votre routing
+      route: '/admin-backoffice/compteur'
     },
     {
       label: 'Gestion des relevés',
       icon: 'clipboard',
-      route: '/admin/releves' // Ajustez la route selon votre routing
+      route: '/admin/releves'
     },
     {
       label: 'Affectation quartier',
       icon: 'map',
-      route: '/admin/affectations' // Ajustez la route selon votre routing
+      route: '/admin/affectations'
     }
   ];
   
   userRole = 'Admin Backoffice';
 
-  // Code existant inchangé
-  compteurs: Compteur[] = [];
-  filteredCompteurs: Compteur[] = [];
+  // Données
+  compteurs: any[] = [];
+  filteredCompteurs: any[] = [];
   currentFilter: FilterTypeCompteur = 'all';
   
   clients: Client[] = [];
   
   showModal = false;
   modalType: 'add' | 'edit' = 'add';
+  loading = false;
   
-  selectedCompteur: Compteur = {
-    idCompteur: 0,
-    typeCompteur: 'EAU',
+  selectedCompteur: any = {
+    id_compteur: 0,
+    type_compteur: CompteurType.EAU,
     adresse: '',
-    client: { idClient: 0, nom: '', prenom: '' }
+    label_client: ''
   };
   
   selectedClientId: number = 0;
 
-  constructor() {}
+  constructor(
+    private compteurService: CompteurService,
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    console.log('🚀 Initialisation du composant Compteur');
     this.loadClients();
     this.loadCompteurs();
   }
 
   loadClients(): void {
-    // Simuler le chargement des clients
-    // Remplacer par votre service HTTP
-    this.clients = [
-      { idClient: 1, nom: 'ALAMI', prenom: 'Ahmed' },
-      { idClient: 2, nom: 'BENANI', prenom: 'Fatima' },
-      { idClient: 3, nom: 'TAZI', prenom: 'Mohamed' },
-      { idClient: 4, nom: 'IDRISSI', prenom: 'Salma' },
-      { idClient: 5, nom: 'FAHMI', prenom: 'Karim' }
-    ];
+    console.log('📥 Chargement des clients');
+    this.compteurService.getAllClients().subscribe({
+      next: (data: any) => {
+        console.log('✅ Clients reçus:', data);
+        console.log('📊 Type de data:', typeof data);
+        console.log('📊 Est un array?', Array.isArray(data));
+        if (Array.isArray(data) && data.length > 0) {
+          console.log('📊 Premier client:', data[0]);
+          console.log('📊 Clés du premier client:', Object.keys(data[0]));
+        }
+        // Gérer les deux formats possibles
+        this.clients = Array.isArray(data) ? data : (data.content || []);
+        console.log('📋 Clients assignés:', this.clients);
+        console.log('📋 Nombre de clients:', this.clients.length);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Erreur clients:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger les clients'
+        });
+      }
+    });
   }
 
   loadCompteurs(): void {
-    // Simuler le chargement des compteurs
-    // Remplacer par votre service HTTP
-    this.compteurs = [
-      {
-        idCompteur: 1,
-        typeCompteur: 'EAU',
-        adresse: '12 Rue Hassan II, Rabat',
-        client: { idClient: 1, nom: 'ALAMI', prenom: 'Ahmed' }
-      },
-      {
-        idCompteur: 2,
-        typeCompteur: 'ELECTRICITE',
-        adresse: '45 Avenue Mohammed V, Casablanca',
-        client: { idClient: 2, nom: 'BENANI', prenom: 'Fatima' }
-      },
-      {
-        idCompteur: 3,
-        typeCompteur: 'EAU',
-        adresse: '78 Boulevard Zerktouni, Marrakech',
-        client: { idClient: 3, nom: 'TAZI', prenom: 'Mohamed' }
-      },
-      {
-        idCompteur: 4,
-        typeCompteur: 'ELECTRICITE',
-        adresse: '23 Rue Al Massira, Fès',
-        client: { idClient: 4, nom: 'IDRISSI', prenom: 'Salma' }
-      },
-      {
-        idCompteur: 5,
-        typeCompteur: 'EAU',
-        adresse: '56 Avenue des FAR, Tanger',
-        client: { idClient: 5, nom: 'FAHMI', prenom: 'Karim' }
-      }
-    ];
+    console.log('📥 Chargement des compteurs');
+    this.loading = true;
     
-    this.applyFilter('all');
+    this.compteurService.getAllCompteurs().subscribe({
+      next: (data: any) => {
+        console.log('✅ Compteurs reçus:', data);
+        console.log('📊 Type de data:', typeof data);
+        console.log('📊 Est un array?', Array.isArray(data));
+        if (Array.isArray(data) && data.length > 0) {
+          console.log('📊 Premier compteur:', data[0]);
+          console.log('📊 Clés du premier compteur:', Object.keys(data[0]));
+          console.log('📊 id_compteur:', data[0]['id_compteur']);
+          console.log('📊 label_client:', data[0]['label_client']);
+          console.log('📊 adresse:', data[0]['adresse']);
+          console.log('📊 type_compteur:', data[0]['type_compteur']);
+        }
+        this.compteurs = Array.isArray(data) ? data : (data.content || []);
+        console.log('📋 Compteurs assignés:', this.compteurs);
+        console.log('📋 Nombre de compteurs:', this.compteurs.length);
+        this.applyFilter('all');
+        this.cdr.detectChanges();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur compteurs:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger les compteurs'
+        });
+        this.loading = false;
+      }
+    });
   }
 
   applyFilter(filter: FilterTypeCompteur): void {
+    console.log('🔍 Filtre appliqué:', filter);
     this.currentFilter = filter;
     
     if (filter === 'all') {
       this.filteredCompteurs = [...this.compteurs];
     } else if (filter === 'eau') {
       this.filteredCompteurs = this.compteurs.filter(
-        c => c.typeCompteur === 'EAU'
+        c => c.type_compteur === CompteurType.EAU
       );
     } else if (filter === 'electricite') {
       this.filteredCompteurs = this.compteurs.filter(
-        c => c.typeCompteur === 'ELECTRICITE'
+        c => c.type_compteur === CompteurType.ELECTRICITE
       );
     }
   }
 
-  getTypeDisplay(type: string): string {
-    return type === 'EAU' ? 'Eau' : 'Électricité';
+  getTypeDisplay(type: CompteurType): string {
+    switch (type) {
+      case CompteurType.EAU:
+        return 'Eau';
+      case CompteurType.ELECTRICITE:
+        return 'Électricité';
+      case CompteurType.GAZ:
+        return 'Gaz';
+      default:
+        return type;
+    }
   }
 
-  getClientDisplay(client: Client): string {
-    return `${client.prenom} ${client.nom}`;
+  getClientDisplay(label: string): string {
+    return label;
   }
 
   openAddModal(): void {
+    console.log('🔓 Ouverture modal d\'ajout');
     this.modalType = 'add';
     this.selectedCompteur = {
-      idCompteur: 0,
-      typeCompteur: 'EAU',
+      id_compteur: 0,
+      type_compteur: CompteurType.EAU,
       adresse: '',
-      client: { idClient: 0, nom: '', prenom: '' }
+      label_client: ''
     };
     this.selectedClientId = 0;
     this.showModal = true;
   }
 
-  openEditModal(compteur: Compteur): void {
+  openEditModal(compteur: any): void {
+    console.log('🔓 Ouverture modal d\'édition');
     this.modalType = 'edit';
     this.selectedCompteur = { ...compteur };
-    this.selectedClientId = compteur.client.idClient;
+    // Trouver le client correspondant par label_client
+    const client = this.clients.find(c => c.label_client === compteur.label_client);
+    this.selectedClientId = client?.id_client || 0;
     this.showModal = true;
   }
 
   closeModal(): void {
+    console.log('❌ Fermeture du modal');
     this.showModal = false;
   }
 
   saveCompteur(): void {
-    // Associer le client sélectionné
-    const client = this.clients.find(c => c.idClient === this.selectedClientId);
-    if (!client) {
-      alert('Veuillez sélectionner un client');
+    console.log('💾 Sauvegarde du compteur');
+    
+    if (!this.selectedClientId) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Attention',
+        detail: 'Veuillez sélectionner un client'
+      });
       return;
     }
-    
-    this.selectedCompteur.client = client;
 
-    if (this.modalType === 'add') {
-      // Ajouter un nouveau compteur
-      const newId = Math.max(...this.compteurs.map(c => c.idCompteur), 0) + 1;
-      const newCompteur: Compteur = {
-        ...this.selectedCompteur,
-        idCompteur: newId
-      };
-      
-      this.compteurs.push(newCompteur);
-      console.log('Compteur ajouté:', newCompteur);
-      
-      // Appeler votre service HTTP ici
-      // this.compteurService.createCompteur(newCompteur).subscribe(...)
-      
-    } else {
-      // Mettre à jour un compteur existant
-      const index = this.compteurs.findIndex(
-        c => c.idCompteur === this.selectedCompteur.idCompteur
-      );
-      
-      if (index !== -1) {
-        this.compteurs[index] = { ...this.selectedCompteur };
-        console.log('Compteur modifié:', this.compteurs[index]);
-        
-        // Appeler votre service HTTP ici
-        // this.compteurService.updateCompteur(this.selectedCompteur).subscribe(...)
-      }
+    if (!this.selectedCompteur.adresse) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Attention',
+        detail: 'Veuillez entrer une adresse'
+      });
+      return;
     }
 
-    this.applyFilter(this.currentFilter);
-    this.closeModal();
+    this.loading = true;
+
+    const request: CreateCompteurRequest = {
+      id_client: this.selectedClientId,
+      adresse: this.selectedCompteur.adresse,
+      type_compteur: this.selectedCompteur.type_compteur
+    };
+
+    if (this.modalType === 'add') {
+      console.log('➕ Création d\'un nouveau compteur');
+      this.compteurService.createCompteur(request).subscribe({
+        next: (response) => {
+          console.log('✅ Compteur créé:', response);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Compteur créé avec succès'
+          });
+          this.loadCompteurs();
+          this.closeModal();
+        },
+        error: (error) => {
+          console.error('❌ Erreur création:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Impossible de créer le compteur'
+          });
+          this.loading = false;
+        }
+      });
+    } else {
+      console.log('✏️ Modification du compteur (non implémenté côté backend)');
+      // Note: Votre backend n'a pas d'endpoint PUT, donc on recharge juste
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Endpoint de modification non disponible'
+      });
+      this.closeModal();
+      this.loading = false;
+    }
   }
 
-  deleteCompteur(compteur: Compteur): void {
-    const clientName = this.getClientDisplay(compteur.client);
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le compteur ${compteur.idCompteur} de ${clientName} ?`)) {
-      this.compteurs = this.compteurs.filter(
-        c => c.idCompteur !== compteur.idCompteur
-      );
-      console.log('Compteur supprimé:', compteur);
+  deleteCompteur(compteur: CompteurResponse): void {
+    console.log('🗑️ Suppression du compteur:', compteur.id_compteur);
+    
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le compteur #${compteur.id_compteur} (${compteur.label_client}) ?`)) {
+      this.loading = true;
       
-      // Appeler votre service HTTP ici
-      // this.compteurService.deleteCompteur(compteur.idCompteur).subscribe(...)
-      
-      this.applyFilter(this.currentFilter);
+      this.compteurService.deleteCompteur(compteur.id_compteur).subscribe({
+        next: () => {
+          console.log('✅ Compteur supprimé');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Compteur supprimé avec succès'
+          });
+          this.loadCompteurs();
+        },
+        error: (error) => {
+          console.error('❌ Erreur suppression:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Impossible de supprimer le compteur'
+          });
+          this.loading = false;
+        }
+      });
     }
   }
 }

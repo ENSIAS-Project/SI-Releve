@@ -10,7 +10,7 @@
     <div class="compteur-container">
       <div class="header">
         <h1>Gestion des Compteurs</h1>
-        <button class="btn-add" (click)="openAddModal()">
+        <button class="btn-add" (click)="openAddModal()" [disabled]="loading">
           <span class="icon-plus">+</span>
           Ajouter un compteur
         </button>
@@ -57,13 +57,13 @@
             </tr>
           </thead>
           <tbody>
-            @for (compteur of filteredCompteurs; track compteur.idCompteur) {
+            @for (compteur of filteredCompteurs; track compteur.id_compteur) {
               <tr>
-                <td class="id-cell">#{{ compteur.idCompteur }}</td>
+                <td class="id-cell">#{{ compteur.id_compteur }}</td>
                 @if (currentFilter === 'all') {
                   <td>
-                    <span class="type-badge" [class.eau]="compteur.typeCompteur === 'EAU'" [class.electricite]="compteur.typeCompteur === 'ELECTRICITE'">
-                      @if (compteur.typeCompteur === 'EAU') {
+                    <span class="type-badge" [class.eau]="compteur.type_compteur === 'EAU'" [class.electricite]="compteur.type_compteur === 'ELECTRICITE'">
+                      @if (compteur.type_compteur === 'EAU') {
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
                         </svg>
@@ -72,21 +72,21 @@
                           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                         </svg>
                       }
-                      {{ getTypeDisplay(compteur.typeCompteur) }}
+                      {{ getTypeDisplay(compteur.type_compteur) }}
                     </span>
                   </td>
                 }
                 <td class="address-cell">{{ compteur.adresse }}</td>
-                <td class="client-cell">{{ getClientDisplay(compteur.client) }}</td>
+                <td class="client-cell">{{ compteur.label_client }}</td>
                 <td>
                   <div class="action-buttons">
-                    <button class="btn-action btn-edit" (click)="openEditModal(compteur)" title="Modifier">
+                    <button class="btn-action btn-edit" (click)="openEditModal(compteur)" title="Modifier" [disabled]="loading">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                       </svg>
                     </button>
-                    <button class="btn-action btn-delete" (click)="deleteCompteur(compteur)" title="Supprimer">
+                    <button class="btn-action btn-delete" (click)="deleteCompteur(compteur)" title="Supprimer" [disabled]="loading">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -122,7 +122,7 @@
                   <select 
                     id="type" 
                     name="type"
-                    [(ngModel)]="selectedCompteur.typeCompteur"
+                    [(ngModel)]="selectedCompteur.type_compteur"
                     required
                     class="form-control">
                     <option value="EAU">Eau</option>
@@ -150,10 +150,10 @@
                     [(ngModel)]="selectedClientId"
                     required
                     class="form-control">
-                    <option value="0" disabled>Sélectionnez un client</option>
-                    @for (client of clients; track client.idClient) {
-                      <option [value]="client.idClient">
-                        {{ getClientDisplay(client) }}
+                    <option [value]="0" disabled selected>Sélectionnez un client</option>
+                    @for (client of clients; track client.id_client) {
+                      <option [value]="client.id_client">
+                        {{ client.label_client }}
                       </option>
                     }
                   </select>
@@ -162,12 +162,12 @@
             </div>
 
             <div class="modal-footer">
-              <button class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+              <button class="btn btn-secondary" (click)="closeModal()" [disabled]="loading">Annuler</button>
               <button 
                 class="btn btn-primary" 
-                [disabled]="!compteurForm.form.valid || selectedClientId === 0"
+                [disabled]="!compteurForm.form.valid || selectedClientId === 0 || loading"
                 (click)="saveCompteur()">
-                {{ modalType === 'add' ? 'Ajouter' : 'Enregistrer' }}
+                {{ loading ? 'Traitement...' : (modalType === 'add' ? 'Ajouter' : 'Enregistrer') }}
               </button>
             </div>
           </div>

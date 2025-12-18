@@ -1,5 +1,4 @@
 <div class="admin-container">
-  <!-- En-tête -->
   <div class="header">
     <h1>
       <i class="pi pi-file-pdf"></i>
@@ -8,7 +7,6 @@
     <p class="subtitle">Consultez tous les relevés des compteurs clients</p>
   </div>
 
-  <!-- Filtres -->
   <div class="filters">
     <button 
       *ngFor="let type of compteurTypes"
@@ -23,9 +21,7 @@
     </button>
   </div>
 
-  <!-- Table Container -->
   <div class="table-container">
-    <!-- Tableau avec PrimeNG -->
     <p-table 
       [value]="getReleves()" 
       [tableStyle]="{ 'width': '100%' }"
@@ -37,7 +33,6 @@
       currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} relevés"
       [loading]="loading"
     >
-      <!-- En-tête du tableau -->
       <ng-template pTemplate="header">
         <tr>
           <th>Client</th>
@@ -48,7 +43,6 @@
         </tr>
       </ng-template>
 
-      <!-- Corps du tableau -->
       <ng-template pTemplate="body" let-releve>
         <tr>
           <td class="font-weight-bold">{{ releve.labelClient }}</td>
@@ -80,7 +74,6 @@
         </tr>
       </ng-template>
 
-      <!-- Message vide -->
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="5" class="no-data">
@@ -93,5 +86,4 @@
   </div>
 </div>
 
-<!-- Toast pour les notifications -->
 <p-toast position="top-right"></p-toast>

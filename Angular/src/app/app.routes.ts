@@ -9,9 +9,10 @@ import { SidebarComponent } from './shared/sidebar-component/sidebar-component';
 
 export const routes: Routes = [
 
-  { 
-    path: 'admin-backoffice/compteur', 
-    component: CompteurComponent 
+
+  {
+    path: 'compteur',
+    component:CompteurComponent,
   },
   {
     path: 'agent-affectation',
