@@ -2,9 +2,22 @@ spring:
   application:
     name: sireleve
 
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
 # generate new keys, set PRIVATE_KEY and PUBLIC_KEY environment variables and use them for production 
 jwt:
   private:
     key: classpath:app.dev.key
   public:
     key: classpath:app.dev.pub
+
