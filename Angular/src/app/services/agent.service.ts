@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -17,7 +17,7 @@ export interface Quartier {
 }
 
 export interface AffectationRequest {
-  idQuartier: number | null;
+  idQuartier: number;
 }
 
 export interface PageResponse<T> {
@@ -36,57 +36,63 @@ export interface PageResponse<T> {
   providedIn: 'root'
 })
 export class AgentService {
-  private apiUrl = '/api/v1'; // URL de base de votre API Spring Boot
+  private apiUrl = '/api/v1';
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Récupère la liste des agents avec pagination
-   * GET /api/v1/agents?page=0&size=10
-   */
+  
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token');
+    
+    if (token) {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      });
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+  }
+
+ 
   getAgents(page: number = 0, size: number = 10): Observable<PageResponse<Agent>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-
-    return this.http.get<PageResponse<Agent>>(`${this.apiUrl}/agents`, { params });
+    
+    const headers = this.getHeaders();
+    
+    return this.http.get<PageResponse<Agent>>(`${this.apiUrl}/agents`, { 
+      params,
+      headers 
+    });
   }
 
-  /**
-   * Récupère uniquement le contenu (agents) sans les métadonnées de pagination
-   */
+ 
   getAgentsContent(page: number = 0, size: number = 10): Observable<Agent[]> {
     return this.getAgents(page, size).pipe(
       map(response => response.content)
     );
   }
 
-  /**
-   * Récupère la liste des quartiers
-   * GET /api/v1/quartiers
-   */
   getQuartiers(): Observable<Quartier[]> {
-    return this.http.get<Quartier[]>(`${this.apiUrl}/quartiers`);
+    const headers = this.getHeaders();
+    
+    return this.http.get<Quartier[]>(`${this.apiUrl}/quartiers`, { 
+      headers 
+    });
   }
 
-  /**
-   * Affecte un agent à un quartier
-   * PUT /api/v1/agents/{idAgent}/quartier
-   */
+ 
   affecterQuartier(idAgent: number, idQuartier: number): Observable<Agent> {
     const body: AffectationRequest = { idQuartier };
-    return this.http.put<Agent>(`${this.apiUrl}/agents/${idAgent}/quartier`, body);
-  }
-
-  /**
-   * Retire l'affectation d'un agent (affecte à null)
-   * PUT /api/v1/agents/{idAgent}/quartier
-   * 
-   * Note: Vous devrez modifier votre backend pour accepter null dans AffectationRequestDto
-   * ou créer un endpoint DELETE séparé
-   */
-  retirerAffectation(idAgent: number): Observable<Agent> {
-    const body: AffectationRequest = { idQuartier: null };
-    return this.http.put<Agent>(`${this.apiUrl}/agents/${idAgent}/quartier`, body);
+    const headers = this.getHeaders();
+    
+    return this.http.put<Agent>(
+      `${this.apiUrl}/agents/${idAgent}/quartier`, 
+      body,
+      { headers }
+    );
   }
 }

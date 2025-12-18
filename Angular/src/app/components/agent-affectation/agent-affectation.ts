@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 
 // PrimeNG Modules
@@ -18,12 +19,13 @@ import { AgentService, Agent, Quartier } from '../../services/agent.service';
   imports: [
     CommonModule,
     FormsModule,
+    HttpClientModule,
     TableModule,
     ButtonModule,
     ToastModule,
     TooltipModule
   ],
-  providers: [MessageService],
+  providers: [MessageService, AgentService],
   templateUrl: './agent-affectation.html',
   styleUrls: ['./agent-affectation.css']
 })
@@ -33,90 +35,88 @@ export class AgentAffectationComponent implements OnInit {
   selectedQuartier: { [key: number]: number | null } = {};
   editingAgent: number | null = null;
   loading: boolean = false;
-  
-  // Pagination
-  totalRecords: number = 0;
-  currentPage: number = 0;
-  pageSize: number = 10;
 
   constructor(
     private agentService: AgentService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    console.log('🚀 Initialisation du composant');
+    
+    const token = localStorage.getItem('auth_token');
+    console.log('📋 Token dans localStorage:', token ? '✅ Présent' : '❌ ABSENT');
+    
     this.loadAgents();
     this.loadQuartiers();
   }
 
-  /**
-   * Charge la liste des agents depuis le backend
-   */
-  loadAgents(page: number = 0, size: number = 10): void {
+  loadAgents(): void {
+    console.log('📥 Chargement des agents');
     this.loading = true;
     
-    this.agentService.getAgents(page, size).subscribe({
+    this.agentService.getAgents(0, 1000).subscribe({
       next: (response) => {
-        this.agents = response.content;
-        this.totalRecords = response.totalElements;
-        this.currentPage = response.number;
-        this.pageSize = response.size;
+        console.log('✅ Agents reçus:', response);
+        this.agents = response.content || [];
         this.loading = false;
-      },
-     
-    });
-  }
-
-  /**
-   * Charge la liste des quartiers depuis le backend
-   */
-  loadQuartiers(): void {
-    this.agentService.getQuartiers().subscribe({
-      next: (quartiers) => {
-        this.quartiers = quartiers;
+        console.log('📊 Nombre agents:', this.agents.length);
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des quartiers:', error);
+        console.error('❌ Erreur agents:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Erreur',
-          detail: 'Impossible de charger la liste des quartiers'
+          detail: 'Impossible de charger les agents'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  loadQuartiers(): void {
+    console.log('📥 Chargement des quartiers');
+    
+    this.agentService.getQuartiers().subscribe({
+      next: (quartiers) => {
+        console.log('✅ Quartiers reçus:', quartiers);
+        this.quartiers = quartiers || [];
+        console.log('📊 Nombre quartiers:', this.quartiers.length);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Erreur quartiers:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger les quartiers'
         });
       }
     });
   }
 
-  /**
-   * Gestion du changement de page dans le tableau
-   */
-  onPageChange(event: any): void {
-    const page = event.first / event.rows;
-    this.loadAgents(page, event.rows);
-  }
-
-  /**
-   * Démarre l'édition d'un agent
-   */
   startEdit(agent: Agent): void {
+    console.log('✏️ Édition agent:', agent);
     this.editingAgent = agent.idAgent;
-    // Trouver l'ID du quartier actuel si l'agent est déjà affecté
+    
+    // Initialiser la sélection avec le quartier actuel
     const quartier = this.quartiers.find(q => q.nomQuartier === agent.nomQuartier);
     this.selectedQuartier[agent.idAgent] = quartier?.idQuartier || null;
+    this.cdr.detectChanges();
   }
 
-  /**
-   * Annule l'édition
-   */
   cancelEdit(): void {
+    console.log('❌ Annulation');
     this.editingAgent = null;
     this.selectedQuartier = {};
+    this.cdr.detectChanges();
   }
 
-  /**
-   * Affecte un quartier à un agent
-   */
   affecterQuartier(agent: Agent): void {
     const quartierSelectionne = this.selectedQuartier[agent.idAgent];
+    console.log('🏘️ Affectation:', quartierSelectionne);
     
     if (!quartierSelectionne) {
       this.messageService.add({
@@ -131,70 +131,38 @@ export class AgentAffectationComponent implements OnInit {
     
     this.agentService.affecterQuartier(agent.idAgent, quartierSelectionne).subscribe({
       next: (updatedAgent) => {
-        // Mettre à jour l'agent dans la liste locale
+        console.log('✅ Agent mis à jour:', updatedAgent);
+        
+        // Mettre à jour l'agent dans la liste
         const index = this.agents.findIndex(a => a.idAgent === agent.idAgent);
         if (index !== -1) {
           this.agents[index] = updatedAgent;
         }
         
+        // Afficher le message de succès
+        const nomQuartier = this.quartiers.find(q => q.idQuartier === quartierSelectionne)?.nomQuartier;
         this.messageService.add({
           severity: 'success',
           summary: 'Succès',
-          detail: `L'agent ${updatedAgent.prenom} ${updatedAgent.nom} a été affecté au quartier ${updatedAgent.nomQuartier}`
+          detail: `Agent affecté au quartier ${nomQuartier}`
         });
         
         this.editingAgent = null;
-        this.selectedQuartier[agent.idAgent] = null;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erreur lors de l\'affectation:', error);
+        console.error('❌ Erreur affectation:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Erreur',
-          detail: error.error?.message || 'Impossible d\'affecter l\'agent au quartier'
+          detail: 'Impossible de modifier l\'affectation'
         });
         this.loading = false;
       }
     });
   }
 
-  /**
-   * Retire l'affectation d'un agent
-   */
-  retirerAffectation(agent: Agent): void {
-    this.loading = true;
-    
-    this.agentService.retirerAffectation(agent.idAgent).subscribe({
-      next: (updatedAgent) => {
-        // Mettre à jour l'agent dans la liste locale
-        const index = this.agents.findIndex(a => a.idAgent === agent.idAgent);
-        if (index !== -1) {
-          this.agents[index] = updatedAgent;
-        }
-        
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Information',
-          detail: `L'affectation de l'agent ${updatedAgent.prenom} ${updatedAgent.nom} a été retirée`
-        });
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Erreur lors du retrait de l\'affectation:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: error.error?.message || 'Impossible de retirer l\'affectation'
-        });
-        this.loading = false;
-      }
-    });
-  }
-
-  /**
-   * Retourne la liste des quartiers disponibles
-   */
   getQuartiersDisponibles(): Quartier[] {
     return this.quartiers;
   }

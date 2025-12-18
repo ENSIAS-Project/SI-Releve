@@ -1,262 +1,287 @@
-/* Styles personnalisés pour le composant */
-
-/* Amélioration du card */
-.card {
-  transition: box-shadow 0.3s ease;
+.admin-container {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.card:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.header {
+  margin-bottom: 30px;
 }
 
-/* Style pour les en-têtes de tableau */
-::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  background-color: #f8fafc;
-  color: #1e293b;
+.header h1 {
+  color: #2c3e50;
+  font-size: 28px;
   font-weight: 600;
-  padding: 1rem;
-  border-bottom: 2px solid #e2e8f0;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* Style pour les lignes du tableau */
-::ng-deep .p-datatable .p-datatable-tbody > tr {
+.header h1 i {
+  color: #667eea;
+  font-size: 32px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Table Container */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* PrimeNG Table Customization */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.users-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.users-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s ease;
 }
 
-::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
-  background-color: #f8fafc;
+.users-table tbody tr:hover {
+  background-color: #f8f9ff;
 }
 
-::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-  padding: 1rem;
+.users-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #333;
   vertical-align: middle;
 }
 
-/* Style pour le dropdown */
-::ng-deep .p-dropdown {
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
+.font-weight-bold {
+  font-weight: 600;
 }
 
-::ng-deep .p-dropdown:hover {
-  border-color: #3b82f6;
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-::ng-deep .p-dropdown:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.flex-center i {
+  color: #667eea;
+  font-size: 16px;
 }
 
-::ng-deep .p-dropdown-panel {
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+/* Role Badge & Quartier Badge */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e3f2fd;
+  color: #1976d2;
+  white-space: nowrap;
 }
 
-/* Style pour les boutons */
-::ng-deep .p-button.p-button-rounded {
-  width: 2.5rem;
-  height: 2.5rem;
-  transition: all 0.2s ease;
+.role-badge.quartier-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
 }
 
-::ng-deep .p-button.p-button-rounded:hover {
-  transform: scale(1.1);
+.role-badge.non-affecte {
+  background: #ffebee;
+  color: #d32f2f;
 }
 
-::ng-deep .p-button.p-button-success {
-  background-color: #10b981;
-  border-color: #10b981;
+.role-badge i {
+  font-size: 11px;
 }
 
-::ng-deep .p-button.p-button-success:hover {
-  background-color: #059669;
-  border-color: #059669;
+/* Edit Mode */
+.edit-mode {
+  width: 100%;
 }
 
-::ng-deep .p-button.p-button-warning {
-  background-color: #f59e0b;
-  border-color: #f59e0b;
+.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #667eea;
+  border-radius: 6px;
+  font-size: 13px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-::ng-deep .p-button.p-button-warning:hover {
-  background-color: #d97706;
-  border-color: #d97706;
+.form-control:focus {
+  outline: none;
+  border-color: #764ba2;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-::ng-deep .p-button.p-button-danger {
-  background-color: #ef4444;
-  border-color: #ef4444;
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-::ng-deep .p-button.p-button-danger:hover {
-  background-color: #dc2626;
-  border-color: #dc2626;
+.btn-action {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 36px;
+  height: 36px;
 }
 
-/* Style pour les badges de quartier */
-.inline-flex.items-center {
-  transition: all 0.2s ease;
+.btn-edit {
+  background: #e3f2fd;
+  color: #1976d2;
 }
 
-.inline-flex.items-center:hover {
-  transform: translateY(-1px);
+.btn-edit:hover {
+  background: #1976d2;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
 }
 
-/* Style pour le paginator */
+.btn-delete {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.btn-delete:hover {
+  background: #d32f2f;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-cancel {
+  background: #e0e0e0;
+  color: #555;
+}
+
+.btn-cancel:hover {
+  background: #d0d0d0;
+}
+
+.btn-action i {
+  font-size: 16px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px !important;
+  color: #999;
+  font-style: italic;
+}
+
+.no-data i {
+  display: block;
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+/* PrimeNG Paginator Override */
+::ng-deep .p-datatable .p-datatable-paginator {
+  background: #f9f9f9 !important;
+  border-top: 1px solid #f0f0f0 !important;
+}
+
 ::ng-deep .p-paginator {
-  background: #f8fafc;
-  border-radius: 0 0 0.5rem 0.5rem;
-  padding: 1rem;
+  padding: 1rem !important;
 }
 
 ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-color: transparent !important;
+}
+
+::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:hover {
+  background: #667eea !important;
+  color: white !important;
+}
+
+/* Loading State */
+::ng-deep .p-datatable .p-datatable-loading-overlay {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+::ng-deep .p-datatable .p-datatable-loading-overlay .p-datatable-loading-icon {
+  color: #667eea !important;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  ::ng-deep .p-datatable .p-datatable-thead > tr > th,
-  ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.75rem;
-    font-size: 0.875rem;
+  .admin-container {
+    padding: 15px;
   }
 
-  ::ng-deep .p-button.p-button-rounded {
-    width: 2rem;
-    height: 2rem;
+  .header h1 {
+    font-size: 22px;
   }
-}
 
-/* Animation pour les messages toast */
-::ng-deep .p-toast {
-  z-index: 9999;
-}
-
-::ng-deep .p-toast-message {
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Style pour les icônes de téléphone */
-.pi-phone {
-  opacity: 0.7;
-}
-
-/* Styles pour le conteneur du select personnalisé */
-.custom-select-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-/* Icône à gauche du select */
-.custom-select-wrapper .select-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #3b82f6;
-  font-size: 14px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Flèche à droite du select */
-.custom-select-wrapper .select-arrow {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 12px;
-  pointer-events: none;
-  z-index: 1;
-  transition: transform 0.2s ease;
-}
-
-/* Rotation de la flèche quand le select est ouvert */
-.custom-select-wrapper select:focus ~ .select-arrow {
-  transform: translateY(-50%) rotate(180deg);
-}
-
-/* Styles du select natif */
-.custom-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  
-  padding: 10px 36px 10px 36px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background-color: white;
-  
-  font-size: 14px;
-  color: #374151;
-  
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  outline: none;
-}
-
-/* Hover sur le select */
-.custom-select:hover {
-  border-color: #3b82f6;
-  background-color: #f9fafb;
-}
-
-/* Focus sur le select */
-.custom-select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  background-color: white;
-}
-
-/* Style des options */
-.custom-select option {
-  padding: 10px;
-  background-color: white;
-  color: #374151;
-}
-
-.custom-select option:hover {
-  background-color: #eff6ff;
-}
-
-/* Style pour l'option disabled (placeholder) */
-.custom-select option:disabled {
-  color: #9ca3af;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .custom-select {
-    font-size: 13px;
-    padding: 8px 32px 8px 32px;
-  }
-  
-  .custom-select-wrapper .select-icon {
-    left: 10px;
+  .users-table th,
+  .users-table td {
+    padding: 12px 8px;
     font-size: 12px;
   }
-  
-  .custom-select-wrapper .select-arrow {
-    right: 10px;
-    font-size: 10px;
-  }
-}
 
-/* Animation de l'icône lors de la sélection */
-@keyframes iconPulse {
-  0%, 100% {
-    transform: translateY(-50%) scale(1);
+  .btn-action {
+    padding: 6px 10px;
+    font-size: 12px;
   }
-  50% {
-    transform: translateY(-50%) scale(1.1);
-  }
-}
 
-.custom-select:focus ~ .select-icon {
-  animation: iconPulse 0.3s ease;
+  .action-buttons {
+    gap: 4px;
+  }
+
+  .role-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
 }
