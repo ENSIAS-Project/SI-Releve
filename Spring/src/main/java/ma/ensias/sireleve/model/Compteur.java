@@ -2,6 +2,7 @@ package ma.ensias.sireleve.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ma.ensias.sireleve.enumz.CompteurType;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Compteur {
     private Long idCompteur;
 
     @Column(nullable = false)
-    private String typeCompteur;
+    private CompteurType typeCompteur;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_client")
