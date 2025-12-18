@@ -6,18 +6,27 @@ import ma.ensias.sireleve.Dto.UserResponseDto;
 import ma.ensias.sireleve.Dto.UserUpdateDto;
 import ma.ensias.sireleve.model.Utilisateur;
 import ma.ensias.sireleve.repository.UtilisateurRepository;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 @AllArgsConstructor
 public class UserService {
 
+    private static final String CHARSET ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!-_";
     private final UtilisateurRepository utilisateurRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+
 
     @Transactional
     public UserResponseDto addUser(UserCreateDto userDto) {
@@ -25,10 +34,17 @@ public class UserService {
         user.setNom(userDto.getNom());
         user.setPrenom(userDto.getPrenom());
         user.setEmail(userDto.getEmail());
-        // TODO: Générer un mot de passe aléatoire et l'envoyer par email
-        user.setMotDePasse(passwordEncoder.encode("TempPass@123"));
+        String password;
+        try {
+            password = generate();
+            mailService.sendWelcomeMail(user.getEmail(),user.getNom(),password);
+        } catch (Exception e) {
+            password = "TempPass@123";  //HACK : yes i am aware that this is not the best design choice
+            e.printStackTrace();
+        }
+        user.setMotDePasse(passwordEncoder.encode(password));
         user.setRoles(userDto.getRoles());
-
+        
         Utilisateur savedUser = utilisateurRepository.save(user);
         return mapToResponseDto(savedUser);
     }
@@ -70,5 +86,18 @@ public class UserService {
                 .dateCreation(user.getDateCreation())
                 .dateModification(user.getDateModification())
                 .build();
+    }
+
+     public static String generate() throws NoSuchAlgorithmException {
+            long time = Instant.now().getEpochSecond();
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(String.valueOf(time).getBytes());
+            int length = 8 + (hash[0] & 0x03); 
+            StringBuilder password = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                int index = Byte.toUnsignedInt(hash[i]) % CHARSET.length();
+                password.append(CHARSET.charAt(index));
+            }
+            return password.toString();
     }
 }

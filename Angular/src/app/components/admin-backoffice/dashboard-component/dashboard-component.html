@@ -1,0 +1,136 @@
+<div class="admin-container">
+  <app-sidebar 
+    [menuItems]="MenuItems"
+    [userRole]="userRole">
+  </app-sidebar>
+
+  <main class="main-content">
+    <div class="dashboard-container">
+      <!-- Header -->
+      <div class="dashboard-header">
+        <div>
+       
+          
+        </div>
+        <button class="btn-export" (click)="exportRapport()">
+          <span class="icon">📥</span>
+          Exporter Rapport
+        </button>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters-card">
+        <div class="filter-group">
+          <label>Période</label>
+          <select [(ngModel)]="selectedMonth" class="filter-select">
+            <option value="2025-01">Janvier 2025</option>
+            <option value="2024-12">Décembre 2024</option>
+            <option value="2024-11">Novembre 2024</option>
+            <option value="2024-10">Octobre 2024</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Quartier</label>
+          <select [(ngModel)]="selectedQuartier" class="filter-select">
+            <option value="tous">Tous les quartiers</option>
+            <option value="agdal">Agdal</option>
+            <option value="hassan">Hassan</option>
+            <option value="ocean">Océan</option>
+            <option value="souissi">Souissi</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpis-grid">
+        <!-- Taux de couverture -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon blue">📊</div>
+            <div>
+              <div class="kpi-label">Taux de couverture</div>
+              <div class="kpi-value">{{ tauxCouverture }}%</div>
+            </div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="tauxCouverture"></div>
+          </div>
+          <div class="kpi-detail">{{ compteurReleves }}/{{ totalCompteurs }} compteurs relevés</div>
+        </div>
+
+        <!-- Relevés par agent -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon green">👥</div>
+            <div>
+              <div class="kpi-label">Relevés/jour/agent</div>
+              <div class="kpi-value">{{ relevesParAgent }}</div>
+            </div>
+          </div>
+          <div class="kpi-trend positive">+5% vs mois dernier</div>
+          <div class="kpi-detail">Moyenne de {{ totalAgents }} agents</div>
+        </div>
+
+        <!-- Alertes anomalies -->
+        
+
+        <!-- Total compteurs -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon purple">🔢</div>
+            <div>
+              <div class="kpi-label">Total compteurs</div>
+              <div class="kpi-value">{{ totalCompteurs }}</div>
+            </div>
+          </div>
+          <div class="kpi-split">
+            <span>💧 Eau: {{ compteursEau }}</span>
+            <span>⚡ Élec: {{ compteursElec }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Agents et Quartiers -->
+      <div class="charts-grid">
+        <!-- Top agents -->
+        <div class="chart-card">
+          <h2 class="chart-title">Top 5 Agents - Relevés par jour</h2>
+          <div class="agents-list">
+            <div *ngFor="let agent of topAgents; let i = index" class="agent-item">
+              <div class="agent-rank">{{ i + 1 }}</div>
+              <div class="agent-info">
+                <div class="agent-name">{{ agent.nom }}</div>
+                <div class="agent-quartier">{{ agent.quartier }}</div>
+              </div>
+              <div class="agent-score">{{ agent.relevesParJour }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Répartition par quartier -->
+      <div class="chart-card full-width">
+        <h2 class="chart-title">Répartition des Relevés par Quartier</h2>
+        <div class="quartiers-grid">
+          <div *ngFor="let q of quartiers" class="quartier-card">
+            <div class="quartier-header">
+              <h3>{{ q.nom }}</h3>
+              <span class="quartier-badge">{{ q.agents }} agents</span>
+            </div>
+            <div class="quartier-stats">
+              <div class="stat-item">
+                <span class="stat-label">Compteurs relevés</span>
+                <span class="stat-value">{{ q.releves }}/{{ q.total }}</span>
+              </div>
+              <div class="progress-bar small">
+                <div class="progress-fill" [style.width.%]="calculatePourcentage(q.releves, q.total)"></div>
+              </div>
+              <div class="stat-percentage">{{ calculatePourcentage(q.releves, q.total).toFixed(1) }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

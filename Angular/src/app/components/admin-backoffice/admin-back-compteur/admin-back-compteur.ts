@@ -35,6 +35,12 @@ export class CompteurComponent implements OnInit {
   // Configuration du sidebar pour ce composant
   compteurMenuItems: MenuItem[] = [
     {
+      label: 'Tableau de Bord',
+      icon: 'dashboard',
+      route: '/admin-backoffice/dashboard',
+  
+    },
+    {
       label: 'Gestion des compteurs',
       icon: 'meter',
       route: '/admin-backoffice/compteur' // Ajustez la route selon votre routing

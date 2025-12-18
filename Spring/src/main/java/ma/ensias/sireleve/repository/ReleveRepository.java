@@ -1,11 +1,13 @@
 package ma.ensias.sireleve.repository;
 
+import ma.ensias.sireleve.model.Compteur;
 import ma.ensias.sireleve.model.Releve;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReleveRepository extends JpaRepository<Releve, Long> {
@@ -15,4 +17,8 @@ public interface ReleveRepository extends JpaRepository<Releve, Long> {
     List<Releve> findByAgentIdAgent(Long idAgent);
 
     List<Releve> findByDateReleveBetween(LocalDate start, LocalDate end);
+    
+    Optional<Releve> findTopByCompteurAndDateReleveLessThanOrderByDateReleveDesc(
+        Compteur compteur, LocalDate dateReleve
+    );
 }

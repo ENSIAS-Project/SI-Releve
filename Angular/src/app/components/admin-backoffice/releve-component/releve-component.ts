@@ -38,19 +38,25 @@ export class ReleveComponent implements OnInit {
   // CONFIGURATION DU SIDEBAR POUR ADMIN BACKOFFICE
   releveMenuItems: MenuItem[] = [
     {
+      label: 'Tableau de Bord',
+      icon: 'dashboard',
+      route: '/admin-backoffice/dashboard',
+  
+    },
+    {
       label: 'Gestion des compteurs',
       icon: 'meter',
-      route: '/admin-backoffice/compteur'
+      route: '/admin-backoffice/compteur' // Ajustez la route selon votre routing
     },
     {
       label: 'Gestion des relevés',
       icon: 'clipboard',
-      route: '/admin-backoffice/releve'
+      route: '/admin-backoffice/releve'// Ajustez la route selon votre routing
     },
     {
       label: 'Affectation quartier',
       icon: 'map',
-      route: '/admin/affectations'
+      route: '/admin/affectations' // Ajustez la route selon votre routing
     }
   ];
   
