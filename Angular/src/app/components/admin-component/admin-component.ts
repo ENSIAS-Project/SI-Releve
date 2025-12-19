@@ -18,7 +18,7 @@ export type FilterType = 'all' | 'superadmin' | 'backoffice';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastModule, SidebarComponent], // Ajoutez SidebarComponent ici
+  imports: [CommonModule, FormsModule, ToastModule], // Ajoutez SidebarComponent ici
   providers: [MessageService],
   templateUrl: './admin-component.html',
   styleUrls: ['./admin-component.css']

@@ -17,7 +17,7 @@ interface MenuItem {
 @Component({
   selector: 'app-compteur',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent, ToastModule],
+  imports: [CommonModule, FormsModule, ToastModule],
   providers: [MessageService],
   templateUrl: './admin-back-compteur.html',
   styleUrl: './admin-back-compteur.css'

@@ -1,54 +1,52 @@
-<aside class="sidebar">
-  <!-- En-tête du sidebar -->
-  <div class="sidebar-header">
-    <div class="app-logo">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-        <path d="M2 17l10 5 10-5"></path>
-        <path d="M2 12l10 5 10-5"></path>
-      </svg>
+@if (showSidebar) {
+  <aside [class.sidebar-open]="sidebarOpen" class="sidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">📱</span>
+        <span class="logo-text" [class.hidden]="!sidebarOpen">SI-Relevé</span>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()" [class.rotated]="!sidebarOpen">
+        ◀
+      </button>
     </div>
-    <h1 class="app-title">SI-Relevé</h1>
-    <p class="user-role">{{ getRoleDisplay() }}</p>
-  </div>
 
-  <!-- Navigation principale -->
-  <nav class="sidebar-nav">
-    <ul class="nav-list">
-      <!-- SIMPLE : Utilise directement menuItems passé par le parent -->
-      @for (item of menuItems; track item.route) {
-        <li class="nav-item">
-          <a 
-            class="nav-link" 
-            [routerLink]="item.route"
-            routerLinkActive="active">
-            
-            <!-- Les icônes restent les mêmes -->
-            @if (item.icon === 'users') {
-              <!-- Icône users -->
-            }
-            @if (item.icon === 'meter') {
-              <!-- Icône meter -->
-            }
-            @if (item.icon === 'clipboard') {
-              <!-- Icône clipboard -->
-            }
-            @if (item.icon === 'map') {
-              <!-- Icône map -->
-            }
-            
-            <span class="nav-text">{{ item.label }}</span>
-          </a>
-        </li>
-      }
-    </ul>
-  </nav>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        @for (item of filteredMenuItems; track item.route) {
+          <li class="nav-item">
+            <a 
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: false }"
+              class="nav-link">
+              <span class="nav-icon">{{ getIcon(item.icon) }}</span>
+              <span class="nav-label" [class.hidden]="!sidebarOpen">{{ item.label }}</span>
+            </a>
+          </li>
+        } @empty {
+          <li class="nav-item">
+            <span class="nav-label">Aucun menu</span>
+          </li>
+        }
+      </ul>
+    </nav>
 
-  <!-- Bouton de déconnexion (inchangé) -->
-  <div class="sidebar-footer">
-    <button class="logout-btn" (click)="logout()">
-      <!-- SVG déconnexion -->
-      <span class="logout-text">Se déconnecter</span>
-    </button>
-  </div>
-</aside>
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <div class="user-info" [class.hidden]="!sidebarOpen">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <p class="user-role">{{ getRoleDisplay() }}</p>
+          <p class="user-status">Connecté</p>
+        </div>
+      </div>
+      
+      <button class="logout-btn" (click)="logout()" [title]="sidebarOpen ? '' : 'Déconnexion'">
+        <span class="logout-icon">🚪</span>
+        <span class="logout-text" [class.hidden]="!sidebarOpen">Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+}
