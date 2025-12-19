@@ -1,0 +1,106 @@
+Cycle de vie d’un Système d’Information :
+Le cycle de vie d'un système d'information est un processus itératif qui débute par une phase d'analyse
+des besoins, où l'on identifie les exigences métier et les contraintes techniques. S'ensuit la conception,
+durant laquelle on définit l'architecture globale, les bases de données, les interfaces et les flux de
+données. Vient ensuite le développement et l'intégration, où les composants logiciels sont codés,
+testés unitairement puis assemblés. Après une phase de recette et de déploiement, le système entre
+en production et devient accessible aux utilisateurs finaux qui l'utilisent quotidiennement pour réaliser
+leurs activités métier. Durant cette longue phase d'exploitation, qui peut durer plusieurs années, le
+système nécessite une maintenance évolutive et corrective pour corriger les anomalies, s'adapter aux
+évolutions réglementaires et répondre aux nouveaux besoins. Enfin, lorsque le système ne répond plus
+aux attentes ou devient obsolète, on entre dans la phase de fin d'exploitation : les utilisateurs finaux
+sont progressivement migrés vers un système de remplacement, leurs données sont transférées, et
+l'accès à l'ancien système est graduellement restreint puis définitivement fermé. Cette phase inclut le
+décommissionnement technique (arrêt des serveurs, archivage légal des données) et s'inscrit dans une
+démarche d'amélioration continue alignée sur la stratégie de la DSI et les objectifs de l'entreprise.
+
+Travail demandé :
+Partant de cette description du cycle de vie d’un Système d’Information, et en se référant au cahier de
+charge joint, il vous est demandé de réaliser un système d’information intelligent, en faisant appel à
+l’intelligence artificielle dans chacune des phases du cycle de vie de ce système.
+Ainsi, vous devez couvrir les différentes étapes du cycle de vie d’un SI (à l’exception de la phase de
+décommissionnement) en utilisant des outils d’intelligence artificielle :
+•
+
+Analyse (NLP et analyse sémantique pour extraire automatiquement les besoins depuis le
+cahier de charges, ...)
+
+•
+
+Conception (IA générative pour les spécifications détaillés, générateurs d’architecture assistés
+par IA, …)
+
+•
+
+Développement/intégration (outils d’assistance au codage en temps réel, « vibe coding »,
+outils de revue de code automatisés basés sur l’IA, détection automatique de bugs, …)
+
+•
+
+Tests unitaire, tests d’intégration et tests fonctionnels (IA générative pour générer les tests
+unitaires, des jeux de données réalistes de test, outils pour l’exécution de tests UI ou
+fonctionnels, …)
+
+•
+
+Déploiement (tests de charge prédictifs avec l’IA, outils de prédiction des risques de
+déploiement, agents intelligents pour le provisionnement automatique des environnements
+…)
+
+•
+
+Exploitation (plateformes de AIOps, outils de monitoring prédictif, analyse automatique des
+logs avec détection d’anomalies et des menaces, optimisation automatique des ressources, …)
+
+•
+
+Maintenance (détection prédictive des anomalies, priorisation des incidents, outils de
+suggestion automatique de corrections, …)
+
+•
+
+Utilisation par les utilisateurs finaux (IA générative pour générer de gros jeux de données
+réalistes, simulation de scénarios métiers complets, génération automatique de tableaux de
+
+1/2
+
+bord, analyse des tendances et prédictions via l’IA, requêtage des données en langage naturel,
+…) (si nécessaire, rajout d’un dataware ou datalake pour atteindre l’objectif visé)
+Le cahier de charges joint décrit un système de gestion des relevés de compteurs d'eau et d'électricité.
+La solution complète est composée de trois briques : (1) un ERP pour la gestion des données clients, la
+gestion du personnel (les agents qui procèdent au relevé de la consommation d’eau et d’électricité) et
+la facturation des clients. (2) Une solution web nommée « SI relevés » qui gère l’affectation des
+compteurs d’eau et d’électricité aux adresses correspondantes, ainsi que celle des agents aux quartiers
+de la ville de Rabat. Le « SI relevés » échange également les données des nouveaux clients, nouveaux
+agents et informations de consommation avec l’ERP. (3) La dernière brique consiste en une solution
+mobile, mise à disposition des agents de terrain pour effectuer la relève de consommation.
+L’application transmet ensuite les indices relevés à l’application web pour les traitements.
+De ces trois briques, il vous est demandé de réaliser uniquement la brique de la solution web « SI
+relève » grâce à des outils IA. Les échanges de données avec l’ERP et l’application mobile devront être
+simulés.
+
+Livrables attendues :
+-
+
+-
+
+-
+
+Un dossier d’architecture fonctionnelle comprenant :
+o Les spécifications fonctionnelles détaillées (incluant les diagrammes de use case et le MCD) ;
+o Le cahier de tests ;
+Un dossier d’architecture techniques comprenant :
+o Le MLD
+o La liste des technologies / frameworks utilisés avec leur version
+o La liste des outils utilisés
+o Le schéma d’architecture de la solution (composants déployés)
+La solution « SI Relevés » déployée et fonctionnelle ;
+Une vidéo démonstrative de la solution avec démonstration de l’utilisation de l’IA à certaines
+étapes ;
+
+Le bilan de l’utilisation de l’IA, les avantages, les difficultés et les limitations rencontrées.
+Remarque : Hormis le bilan, les documents sont à générer avec l’aide des outils d’IA.
+
+2/2
+
+

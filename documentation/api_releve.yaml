@@ -1,0 +1,502 @@
+openapi: 3.0.3
+
+info:
+  title: SI Relevés API
+  description: API du système de gestion des relevés de compteurs (Backoffice Web)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api/v1/
+
+tags:
+  - name: Authentification
+  - name: Utilisateurs
+  - name: Clients
+  - name: Compteurs
+  - name: Agents
+  - name: Quartiers
+  - name: Relèves
+
+paths:
+  /user/login:
+    post:
+      tags: [Authentification]
+      summary: Connexion utilisateur
+      description: Authentification et génération du token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Identifiants invalides
+
+  /user/logout:
+    post:
+      tags: [Authentification]
+      summary: Déconnexion utilisateur
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Déconnexion réussie
+        "401":
+          description: Non autorisé
+
+  # ================= SUPERADMIN =================
+
+  /users/get:
+    get:
+      tags: [Utilisateurs]
+      summary: Afficher les utilisateurs
+      description: Liste paginée des utilisateurs (SUPERADMIN)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+      responses:
+        "200":
+          description: Liste des utilisateurs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Non autorisé
+
+  /users/add:
+    post:
+      tags: [Utilisateurs]
+      summary: Ajouter un utilisateur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+      responses:
+        "200":
+          description: Utilisateur ajouté
+        "401":
+          description: Non autorisé
+
+  /users/update/{id_user}:
+    put:
+      tags: [Utilisateurs]
+      summary: Modifier un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+      responses:
+        "200":
+          description: Utilisateur modifié
+        "401":
+          description: Non autorisé
+        "404":
+          description: Utilisateur non trouvé
+
+  /users/delete/{id_user}:
+    delete:
+      tags: [Utilisateurs]
+      summary: Supprimer un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      responses:
+        "204":
+          description: Utilisateur supprimé
+        "401":
+          description: Non autorisé
+        "404":
+          description: Utilisateur non trouvé
+
+  # ================= UTILISATEUR =================
+
+  /clients:
+    get:
+      tags: [Clients]
+      summary: Liste des clients
+      description: Retourne la liste des clients. Sans paramètres, retourne tous les clients pour l'affectation de compteur.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Numéro de page (0-indexed)
+          schema:
+            type: integer
+        - name: size
+          in: query
+          required: false
+          description: Nombre d'éléments par page
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Liste des clients
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/ClientOption"
+                  - $ref: "#/components/schemas/ClientPageResponse"
+        "401":
+          description: Non autorisé
+
+  /compteurs:
+    get:
+      tags: [Compteurs]
+      summary: Liste des compteurs
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+      responses:
+        "200":
+          description: Liste des compteurs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompteurResponse"
+        "401":
+          description: Non autorisé
+
+    post:
+      tags: [Compteurs]
+      summary: Ajouter un compteur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompteurRequest"
+      responses:
+        "200":
+          description: Compteur créé
+        "401":
+          description: Non autorisé
+
+  /compteurs/{id_compteur}:
+    delete:
+      tags: [Compteurs]
+      summary: Supprimer un compteur
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CompteurIdPath"
+      responses:
+        "204":
+          description: Compteur supprimé
+        "401":
+          description: Non autorisé
+        "404":
+          description: Compteur non trouvé
+
+  /releves:
+    get:
+      tags: [Relèves]
+      summary: Liste des relèves
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+      responses:
+        "200":
+          description: Liste des relèves
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReleveResponse"
+        "401":
+          description: Non autorisé
+
+  /agents:
+    get:
+      tags: [Agents]
+      summary: Liste des agents
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+      responses:
+        "200":
+          description: Liste des agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgentResponse"
+        "401":
+          description: Non autorisé
+
+  /agents/{id_agent}/quartier:
+    put:
+      tags: [Agents]
+      summary: Affecter un agent à un quartier
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AgentIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AffectationRequest"
+      responses:
+        "200":
+          description: Agent affecté
+        "401":
+          description: Non autorisé
+        "404":
+          description: Agent ou quartier non trouvé
+
+  /quartiers:
+    get:
+      tags: [Quartiers]
+      summary: Liste des quartiers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Liste des quartiers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuartierResponse"
+        "401":
+          description: Non autorisé
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        example: 0
+
+    SizeParam:
+      name: size
+      in: query
+      schema:
+        type: integer
+        example: 10
+
+    UserIdPath:
+      name: id_user
+      in: path
+      required: true
+      schema:
+        type: integer
+
+    CompteurIdPath:
+      name: id_compteur
+      in: path
+      required: true
+      schema:
+        type: integer
+
+    AgentIdPath:
+      name: id_agent
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        role:
+          type: string
+
+    UserRequest:
+      type: object
+      required: [nom, prenom, role, email]
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        role:
+          type: string
+        email:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        id_user:
+          type: integer
+        nom:
+          type: string
+        prenom:
+          type: string
+        role:
+          type: string
+        email:
+          type: string
+
+    ClientOption:
+      type: object
+      properties:
+        id_client:
+          type: integer
+        label_client:
+          type: string
+
+    ClientPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClientOption"
+        pageable:
+          type: object
+          properties:
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            offset:
+              type: integer
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        empty:
+          type: boolean
+
+    CreateCompteurRequest:
+      type: object
+      required: [id_client, adresse, type_compteur]
+      properties:
+        id_client:
+          type: integer
+        adresse:
+          type: string
+        type_compteur:
+          type: string
+          enum: [EAU, ELECTRICITE]
+
+    CompteurResponse:
+      type: object
+      properties:
+        id_compteur:
+          type: integer
+        label_client:
+          type: string
+        adresse:
+          type: string
+        type_compteur:
+          type: string
+
+    ReleveResponse:
+      type: object
+      properties:
+        label_client:
+          type: string
+        type_compteur:
+          type: string
+        adresse:
+          type: string
+        consommation:
+          type: number
+        date_releve:
+          type: string
+          format: date-time
+
+    AgentResponse:
+      type: object
+      properties:
+        id_agent:
+          type: integer
+        nom:
+          type: string
+        prenom:
+          type: string
+        tel_professionnel:
+          type: string
+        nom_quartier:
+          type: string
+
+    AffectationRequest:
+      type: object
+      required: [id_quartier]
+      properties:
+        id_quartier:
+          type: integer
+
+    QuartierResponse:
+      type: object
+      properties:
+        id_quartier:
+          type: integer
+        nom_quartier:
+          type: string

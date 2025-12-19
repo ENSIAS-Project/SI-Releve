@@ -1,0 +1,599 @@
+\section{Cahier de Tests}
+
+\subsection{Introduction}
+Ce cahier de tests décrit l'ensemble des scénarios de test fonctionnels pour l'application backoffice web "SI Relevé". Les tests couvrent les fonctionnalités principales définies dans le cahier de charges et implémentées dans le système.
+
+\subsection{Objectifs des Tests}
+\begin{itemize}
+    \item Valider les fonctionnalités métier de l'application SI Relevé
+    \item Vérifier l'intégration avec les systèmes externes (ERPs et Application Mobile)
+    \item Assurer le respect des exigences de sécurité (authentification, rôles, JWT)
+    \item Garantir la qualité de l'expérience utilisateur
+\end{itemize}
+
+\subsection{Périmètre des Tests}
+\begin{itemize}
+    \item Tests fonctionnels des cas d'utilisation
+    \item Tests d'intégration avec les systèmes externes
+    \item Tests de sécurité et gestion des rôles
+    \item Tests d'interface utilisateur (UI)
+\end{itemize}
+
+\subsection{Organisation des Tests}
+Les tests sont organisés par module fonctionnel. Chaque test comprend :
+\begin{itemize}
+    \item \textbf{ID} : Identifiant unique du test
+    \item \textbf{Objectif} : But du test
+    \item \textbf{Préconditions} : État initial requis
+    \item \textbf{Données de test} : Données utilisées
+    \item \textbf{Étapes} : Actions à effectuer
+    \item \textbf{Résultat attendu} : Résultat espéré
+    \item \textbf{Screenshot} : Référence à la capture d'écran
+\end{itemize}
+
+\subsection{Tests d'Authentification et Sécurité}
+
+\subsubsection{Test AUTH-001 : Connexion avec identifiants valides}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur peut se connecter avec des identifiants valides
+    \item \textbf{Préconditions} : Utilisateur créé dans le système
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Username : admin@sireleve.com
+            \item Password : Test@1234
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Accéder à la page de connexion
+            \item Saisir le username
+            \item Saisir le mot de passe
+            \item Cliquer sur "Se connecter"
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Redirection vers la page d'accueil appropriée (selon le rôle)
+            \item Token JWT généré et stocké
+            \item Session active
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/auth/AUTH-001-connexion-valide.png}
+\end{itemize}
+
+\subsubsection{Test AUTH-002 : Connexion avec identifiants invalides}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'accès est refusé avec des identifiants invalides
+    \item \textbf{Préconditions} : Aucune
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Username : invalid@test.com
+            \item Password : WrongPassword
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Accéder à la page de connexion
+            \item Saisir un username invalide
+            \item Saisir un mot de passe invalide
+            \item Cliquer sur "Se connecter"
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Message d'erreur affiché : "Identifiants invalides"
+            \item Utilisateur reste sur la page de connexion
+            \item Code HTTP 401 (Non autorisé)
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/auth/AUTH-002-connexion-invalide.png}
+\end{itemize}
+
+\subsubsection{Test AUTH-003 : Déconnexion automatique après 10 minutes d'inactivité}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur est déconnecté après 10 minutes d'inactivité
+    \item \textbf{Préconditions} : Utilisateur connecté
+    \item \textbf{Données de test} : Session active
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Se connecter avec des identifiants valides
+            \item Ne pas effectuer d'action pendant 10 minutes
+            \item Tenter d'effectuer une action
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Redirection automatique vers la page de connexion
+            \item Message : "Session expirée, veuillez vous reconnecter"
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/auth/AUTH-003-session-expiree.png}
+\end{itemize}
+
+\subsection{Tests de Gestion des Utilisateurs (SUPERADMIN)}
+
+\subsubsection{Test USER-001 : Créer un nouvel utilisateur}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un SuperAdmin peut créer un nouvel utilisateur
+    \item \textbf{Préconditions} : Connecté en tant que SuperAdmin
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Nom : BENALI
+            \item Prénom : Youssef
+            \item Rôle : Utilisateur
+            \item Email : youssef.benali@ree.ma
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Gestion des utilisateurs"
+            \item Cliquer sur "Ajouter un utilisateur"
+            \item Remplir le formulaire avec les données de test
+            \item Cliquer sur "Enregistrer"
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Utilisateur créé avec succès
+            \item Mot de passe généré automatiquement (8 caractères min)
+            \item Email envoyé à l'utilisateur avec le mot de passe
+            \item Utilisateur visible dans la liste
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/users/USER-001-creation-utilisateur.png}
+\end{itemize}
+
+\subsubsection{Test USER-002 : Modifier un utilisateur existant}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un SuperAdmin peut modifier les informations d'un utilisateur
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant que SuperAdmin
+            \item Utilisateur existant dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Nouveau rôle : SuperAdmin
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Gestion des utilisateurs"
+            \item Cliquer sur un utilisateur
+            \item Modifier le rôle
+            \item Cliquer sur "Enregistrer"
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Modifications sauvegardées
+            \item Message de confirmation affiché
+            \item Changements visibles dans la liste
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/users/USER-002-modification-utilisateur.png}
+\end{itemize}
+
+\subsubsection{Test USER-003 : Supprimer un utilisateur}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un SuperAdmin peut supprimer un utilisateur
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant que SuperAdmin
+            \item Utilisateur existant dans le système
+        \end{itemize}
+    \item \textbf{Données de test} : ID d'un utilisateur à supprimer
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Gestion des utilisateurs"
+            \item Sélectionner un utilisateur
+            \item Cliquer sur "Supprimer"
+            \item Confirmer la suppression
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Utilisateur supprimé de la base de données
+            \item Code HTTP 204 (No Content)
+            \item Utilisateur n'apparaît plus dans la liste
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/users/USER-003-suppression-utilisateur.png}
+\end{itemize}
+
+\subsection{Tests de Gestion des Compteurs}
+
+\subsubsection{Test COMP-001 : Consulter la liste des compteurs paginée}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur peut consulter la liste paginée des compteurs
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Au moins 15 compteurs dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item page=0
+            \item size=10
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Compteurs"
+            \item Observer la liste affichée
+            \item Vérifier les contrôles de pagination
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Affichage de 10 compteurs par page
+            \item Contrôles de pagination visibles
+            \item Informations : ID compteur, adresse, type
+            \item Total des pages affiché correctement
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/compteurs/COMP-001-liste-paginee.png}
+\end{itemize}
+
+\subsubsection{Test COMP-002 : Créer un nouveau compteur}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un utilisateur peut créer un compteur et l'affecter à un client
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Au moins un client dans le système
+            \item Adresse sans compteur disponible
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item id\_client : 1
+            \item adresse : "12 Rue Hassan II, Agdal, Rabat"
+            \item type\_compteur : EAU
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Compteurs"
+            \item Cliquer sur "Ajouter un compteur"
+            \item Sélectionner le client (popup avec liste)
+            \item Saisir l'adresse
+            \item Sélectionner le type (EAU/ELECTRICITE)
+            \item Cliquer sur "Enregistrer"
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Compteur créé avec ID auto-généré
+            \item Compteur visible dans la liste
+            \item Association client-compteur établie
+            \item Code HTTP 200 (OK)
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/compteurs/COMP-002-creation-compteur.png}
+\end{itemize}
+
+\subsubsection{Test COMP-003 : Supprimer un compteur}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un utilisateur peut supprimer un compteur
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Compteur existant sans relevés
+        \end{itemize}
+    \item \textbf{Données de test} : id\_compteur : 5
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Compteurs"
+            \item Sélectionner un compteur
+            \item Cliquer sur "Supprimer"
+            \item Confirmer la suppression
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Compteur supprimé de la base
+            \item Code HTTP 204 (No Content)
+            \item Compteur n'apparaît plus dans la liste
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/compteurs/COMP-003-suppression-compteur.png}
+\end{itemize}
+
+\subsection{Tests de Gestion des Agents}
+
+\subsubsection{Test AGENT-001 : Consulter la liste des agents}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur peut consulter la liste paginée des agents
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Au moins 5 agents dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item page=0
+            \item size=10
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Agents"
+            \item Observer la liste affichée
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Liste des agents affichée
+            \item Informations : Nom, Prénom, Téléphone, Quartier affecté
+            \item Pagination fonctionnelle
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/agents/AGENT-001-liste-agents.png}
+\end{itemize}
+
+\subsubsection{Test AGENT-002 : Affecter un agent à un quartier}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un utilisateur peut affecter un agent à un quartier
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Agent sans affectation
+            \item Au moins un quartier dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item id\_agent : 3
+            \item id\_quartier : 2 (Agdal)
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Agents"
+            \item Cliquer sur un agent
+            \item Sélectionner un quartier dans la liste
+            \item Cliquer sur "Affecter"
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Agent affecté au quartier
+            \item Code HTTP 200 (OK)
+            \item Quartier visible dans les détails de l'agent
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/agents/AGENT-002-affectation-quartier.png}
+\end{itemize}
+
+\subsection{Tests de Gestion des Clients}
+
+\subsubsection{Test CLIENT-001 : Consulter tous les clients (sans pagination)}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur peut obtenir tous les clients pour une sélection
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Au moins 5 clients dans le système
+        \end{itemize}
+    \item \textbf{Données de test} : Aucun paramètre page
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Appeler GET /api/v1/clients (sans paramètres)
+            \item Observer la réponse
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Tableau JSON de tous les clients
+            \item Chaque client contient : id\_client, label\_client
+            \item Format : [{id\_client: 1, label\_client: "BENALI Youssef"}, ...]
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/clients/CLIENT-001-tous-clients.png}
+\end{itemize}
+
+\subsubsection{Test CLIENT-002 : Consulter clients paginés}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur peut obtenir les clients avec pagination
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Au moins 15 clients dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item page=0
+            \item size=10
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Appeler GET /api/v1/clients?page=0\&size=10
+            \item Observer la réponse
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Objet Page avec métadonnées
+            \item content: tableau de 10 clients
+            \item totalPages, totalElements correctement calculés
+            \item first: true, last: false (si plus de 10 clients)
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/clients/CLIENT-002-clients-pagines.png}
+\end{itemize}
+
+\subsection{Tests de Gestion des Relevés}
+
+\subsubsection{Test RELEVE-001 : Consulter la liste des relevés}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'utilisateur peut consulter la liste des relevés
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Connecté en tant qu'Utilisateur
+            \item Au moins 10 relevés dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item page=0
+            \item size=10
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Naviguer vers "Relevés"
+            \item Observer la liste affichée
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Liste des relevés triée par date (plus récents en premier)
+            \item Colonnes : Date, Agent, Adresse, Type compteur, Consommation
+            \item Pagination fonctionnelle
+            \item Filtres disponibles (quartier, agent, type)
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/releves/RELEVE-001-liste-releves.png}
+\end{itemize}
+
+\subsection{Tests d'Intégration avec Systèmes Externes}
+
+\subsubsection{Test INTEG-001 : Réception de nouveaux clients depuis SI Commercial}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que le système reçoit correctement les nouveaux clients
+    \item \textbf{Préconditions} : SI Commercial configuré pour envoyer des données
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Client : {id: 100, nom: "ALAMI", prenom: "Fatima", adresse: "15 Av. Mohammed V"}
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Simuler l'envoi via batch du SI Commercial
+            \item Vérifier la réception dans SI Relevé
+            \item Consulter la liste des clients
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Client créé dans la base SI Relevé
+            \item Données complètes et correctes
+            \item Client disponible pour affectation compteur
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/integration/INTEG-001-reception-clients.png}
+\end{itemize}
+
+\subsubsection{Test INTEG-002 : Réception de nouveaux agents depuis SI RH}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que le système reçoit correctement les nouveaux agents
+    \item \textbf{Préconditions} : SI RH configuré pour envoyer des données
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Agent : {nom: "TAHIRI", prenom: "Ahmed", tel\_pro: "0661234567"}
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Simuler l'envoi via batch du SI RH
+            \item Vérifier la réception dans SI Relevé
+            \item Consulter la liste des agents
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Agent créé dans la base SI Relevé
+            \item Données complètes et correctes
+            \item Agent disponible pour affectation quartier
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/integration/INTEG-002-reception-agents.png}
+\end{itemize}
+
+\subsubsection{Test INTEG-003 : Réception de relevés depuis Application Mobile}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que le système reçoit les relevés de l'application mobile
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Application Mobile configurée
+            \item Compteur existant dans le système
+        \end{itemize}
+    \item \textbf{Données de test} :
+        \begin{itemize}
+            \item Relevé : {id\_compteur: 1, nouvel\_index: 12500, date: "2025-01-15T10:30:00"}
+        \end{itemize}
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Simuler l'envoi d'un relevé via web service
+            \item Vérifier la réception dans SI Relevé
+            \item Vérifier le calcul de consommation
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Relevé enregistré dans la base
+            \item Consommation calculée automatiquement
+            \item Données visibles dans la liste des relevés
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/integration/INTEG-003-reception-releves.png}
+\end{itemize}
+
+\subsubsection{Test INTEG-004 : Envoi des consommations vers SI Facturation}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que les consommations sont envoyées au SI Facturation
+    \item \textbf{Préconditions} : 
+        \begin{itemize}
+            \item Relevés reçus et consommations calculées
+            \item SI Facturation configuré
+        \end{itemize}
+    \item \textbf{Données de test} : Consommations calculées du mois
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Attendre le calcul automatique des consommations
+            \item Vérifier l'envoi automatique vers SI Facturation
+            \item Confirmer la réception côté SI Facturation (simulation)
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Web service appelé avec succès
+            \item Données formatées correctement
+            \item Confirmation de réception
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/integration/INTEG-004-envoi-facturation.png}
+\end{itemize}
+
+\subsection{Tests de Sécurité et Contrôle d'Accès}
+
+\subsubsection{Test SEC-001 : Accès refusé à un endpoint protégé sans authentification}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier que l'accès aux endpoints protégés nécessite une authentification
+    \item \textbf{Préconditions} : Aucune session active
+    \item \textbf{Données de test} : Aucune
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Tenter d'accéder à GET /api/v1/compteurs sans token JWT
+            \item Observer la réponse
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Code HTTP 401 (Unauthorized)
+            \item Message : "Authentification requise"
+            \item Pas d'accès aux données
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/security/SEC-001-acces-refuse.png}
+\end{itemize}
+
+\subsubsection{Test SEC-002 : Restriction d'accès basée sur les rôles}
+\begin{itemize}
+    \item \textbf{Objectif} : Vérifier qu'un Utilisateur ne peut pas accéder aux fonctions SuperAdmin
+    \item \textbf{Préconditions} : Connecté en tant qu'Utilisateur
+    \item \textbf{Données de test} : Token JWT avec rôle UTILISATEUR
+    \item \textbf{Étapes} :
+        \begin{enumerate}
+            \item Se connecter en tant qu'Utilisateur
+            \item Tenter d'accéder à GET /api/v1/users
+            \item Observer la réponse
+        \end{enumerate}
+    \item \textbf{Résultat attendu} : 
+        \begin{itemize}
+            \item Code HTTP 403 (Forbidden)
+            \item Message : "Accès refusé - Rôle insuffisant"
+            \item Pas d'accès aux données utilisateurs
+        \end{itemize}
+    \item \textbf{Screenshot} : \texttt{tests/screenshots/security/SEC-002-role-refuse.png}
+\end{itemize}
+
+\subsection{Matrice de Traçabilité}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Exigence CDC} & \textbf{Tests} & \textbf{Statut} \\
+\hline
+Authentification JWT & AUTH-001, AUTH-002, AUTH-003 & À tester \\
+Gestion utilisateurs (SuperAdmin) & USER-001, USER-002, USER-003 & À tester \\
+Gestion compteurs & COMP-001, COMP-002, COMP-003 & À tester \\
+Affectation agents & AGENT-001, AGENT-002 & À tester \\
+Consultation clients & CLIENT-001, CLIENT-002 & À tester \\
+Consultation relevés & RELEVE-001 & À tester \\
+Intégration SI Commercial & INTEG-001 & À tester \\
+Intégration SI RH & INTEG-002 & À tester \\
+Intégration App Mobile & INTEG-003 & À tester \\
+Intégration SI Facturation & INTEG-004 & À tester \\
+Sécurité et rôles & SEC-001, SEC-002 & À tester \\
+\hline
+\end{tabular}
+\caption{Matrice de traçabilité exigences-tests}
+\end{table}
+
+\subsection{Environnement de Test}
+\begin{itemize}
+    \item \textbf{Backend} : Spring Boot 4.0.0 avec Java 25
+    \item \textbf{Frontend} : Angular 18
+    \item \textbf{Base de données} : H2 Database (mode test)
+    \item \textbf{Authentification} : JWT avec clés de test
+    \item \textbf{Navigateurs} : Chrome, Firefox (dernières versions)
+\end{itemize}
+
+\subsection{Critères de Succès}
+\begin{itemize}
+    \item Tous les tests fonctionnels passent avec succès
+    \item Couverture de code $\geq$ 80\%
+    \item Aucune régression sur les fonctionnalités existantes
+    \item Respect des temps de réponse ($<$ 2 secondes pour toute requête)
+    \item Sécurité validée (authentification et autorisation)
+\end{itemize}

@@ -1,0 +1,815 @@
+CAHIER DES CHARGES
+Système de Gestion des Relevés de Compteurs d'Eau et d'Électricité
+Société émettrice : RABAT ENERGIE & EAU (REE)
+
+1. Présentation Du Projet
+1.1. Contexte
+RABAT ENERGIE & EAU (REE) est un fournisseur d'eau et d'électricité opérant dans les
+quartiers de la ville de Rabat. Dans le cadre de sa stratégie de transformation digitale, REE
+souhaite informatiser son processus de relevé de compteurs et de facturation.
+Il s'agit d'une première informatisation des processus de l'entreprise, qui nécessite la mise
+en place d'une solution complète intégrant un ERP et des applications dédiées.
+Le présent cahier de charge concerne un seul volet de ce chantier d’informatisation.
+
+1.2. Objectifs du projet
+Les objectifs principaux du projet global sont :
+•
+
+Digitaliser le processus de relevé des compteurs d'eau et d'électricité
+
+•
+
+Automatiser le calcul des consommations et la facturation
+
+•
+
+Faciliter le relevé d'index de consommation pour les agents
+
+•
+
+Améliorer le suivi et le contrôle des opérations de relevé
+
+1.3. Périmètre du projet
+Le projet complet comprend :
+L’intégration des modules ci-dessous d’un ERP :
+•
+
+“SI Commercial” pour l’ajout de clients
+
+•
+
+“SI RH” (Ressources Humaines) pour l’ajout d’agents de terrain
+
+•
+
+“SI Facturation” Gestion de la facturation des clients
+
+La mise en place d’une application backoffice Web pour la gestion des compteurs et
+l’affectation des agents de terrain.
+La mise en place d’une solution mobile pour la relève des compteurs par les agents de terrain
+Le présent cahier de charge de rapporte au volet ci-dessous :
+
+Application Backoffice Web
+“SI Relevés” pour la gestion des compteurs et l’affectation des agents de terrain
+1/9
+
+2. Besoins Fonctionnels
+2.1. Processus métier global
+1. Le chargé de clientèle ajoute de nouveaux clients dans le “SI Commercial”
+Parallèlement, l’admin RH peut ajouter de nouveaux agents de terrain dans le “SI RH”
+2. Au niveau du “SI Relevés”, un administrateur (rôle superadmin) peut :
+◦
+
+Créer des comptes
+
+◦
+
+Affecter les rôles : superadmin ou utilisateur pour les « admins backoffice »
+
+3. Un admin backoffice (rôle utilisateur) au niveau du “SI Relevés” (Backoffice Web) peut :
+◦
+
+Créer des compteurs et les associer aux adresses ne possédant pas déjà de
+compteur
+
+◦
+
+Affecter un agent de terrain à un quartier de la ville
+
+◦
+
+Consulter l’avancement des opérations de relevé via des tableaux de bord
+
+◦
+
+Envoyer les données relevées à la facturation
+
+4. L’Agent de Terrain procède au relevé des compteurs d’eau et d’électricité du quartier
+auquel il est affecté
+5. Le service comptabilité peut éditer les factures pour envoi aux clients
+
+2.2. Gestion des données de référence
+Création d'un nouveau client dans le “SI Commercial”
+La création d’un nouveau client se fait au niveau du module « SI Commercial » dans
+l’ERP.
+
+Création d'un nouvel agent dans le “SI RH”
+La création d’un nouvel agent se fait au niveau du module SI RH de l’ERP.
+
+Création d'un nouvel utilisateur dans le “SI Relevés” (Backoffice Web)
+•
+
+Informations utilisateur à saisir : nom de famille, prénom, rôle (Utilisateur ou
+Superadmin)
+
+•
+
+Mise en forme des données
+
+- Le NOM DE FAMILLE doit être saisi en MAJUSCULES.
+Ex: DRIOUECH; AIT MOHAMED; ES-SERGHINI
+- Le Prénom doit être saisi en Nom Propre (Première Lettre en Majuscule).
+Ex: Ali; Fatima Ezzahra; Mohamed-Amine
+
+Gestion des compteurs dans le “SI Relevés” (Backoffice Web)
+•
+
+Informations Compteur à la création :
+
+- Identifiant unique (nombre sur 9 chiffres avec des zéros qui précèdent. Ex : 000000001,
+006738193)
+- Adresse associée
+- Type : Eau | Electricité
+2/9
+
+- Index de relevé : 0 à la création
+•
+
+Jusqu’à 2 compteurs peuvent être associés à une seule adresse : Eau et Électricité
+
+•
+
+Pour les immeubles, il y a jusqu’à deux compteurs supplémentaires (Eau et Électricité),
+associé aux espaces communs.
+
+•
+
+Association d’un Agent de Terrain à un quartier :
+
+Plusieurs agents peuvent être associés au même quartier.
+1 agent pour 300 adresses est une bonne moyenne pour que la relève des compteurs se
+fasse dans de bonnes conditions.
+
+2.3. Processus de relevé mensuel
+Informations envoyées au “SI Relevés” (Backoffice Web)
+•
+
+•
+
+Pour chaque nouveau client, les informations suivantes sont transmises au “SI
+Relevés” depuis le “SI Commercial” :
+◦
+
+Identifiant client
+
+◦
+
+Adresses associées
+▪
+
+Adresse complète
+
+▪
+
+Identifiant de l’adresse (cas échéant)
+
+Pour chaque nouvel agent, les informations suivantes sont transmises au “SI Relevés”
+depuis le “SI RH” :
+◦
+
+Nom de famille et Prénom de l’Agent de Terrain
+
+◦
+
+Numéros de téléphone : personnel et professionnel
+
+Gestion des tournées
+Dans le fonctionnement de la REE, l’agent de terrain qui fait sa tournée connaît déjà les
+adresses qu’il doit visiter et pour lesquelles il doit faire un relevé de compteurs.
+En moyenne, un agent de terrain parvient à faire le relevé de 50 compteurs par jour.
+La REE a aussi mis en place une organisation pour que l’ajout d’un nouveau compteur se fasse
+avant la tournée de l’agent de terrain. Donc lorsque l’agent de terrain effectue sa tournée, il est
+sûr de trouver le compteur, même lorsque le compteur est nouveau.
+A ce jour, il n’y a pas de compteurs qui sont enlevés et il n’y a pas de modification d’adresses
+existantes : le compteur associé à une adresse reste associé à cette adresse.
+Tout nouvel agent se voit affecté un téléphone portable avec l’application déjà installée avant
+sa première tournée.
+
+Réalisation du relevé (Agent de Terrain) via application mobile
+L’agent de terrain procède à la relève de l’index de consommation (lecture directe du
+compteur).
+•
+
+Il valide et enregistre le relevé
+
+•
+
+Tous les relevés effectués dans la journée sont envoyés au “SI Relevés” :
+•
+
+N° compteur
+
+•
+
+Nouvel index
+3/9
+
+•
+
+Date et heure de la relève
+
+Calcul de la consommation, application “SI Relevés” (Backoffice Web)
+•
+
+Le “SI Relevés” doit stocker la date de relève (le jour + le moment, le cas échéant)
+
+•
+
+Une fois les relevés collectés dans l’application “SI Relevés” (Backoffice Web), la
+consommation mensuelle peut être calculée
+
+•
+
+Consommation = Relevé actuel - Relevé précédent
+
+•
+
+Calcul en m³ pour l'eau
+
+•
+
+Calcul en kWh pour l'électricité
+
+•
+
+Les prix sont déterminés dans le “SI Facturation”.
+
+•
+
+Les données de consommation une fois calculées, peuvent être envoyées au “SI
+Facturation”
+
+•
+
+Les informations envoyées (groupées) sont
+
+- Identifiant client
+- Adresse (ou identifiant adresse le cas échéant)
+- Numéro de compteur
+- Date de relève (+ moment de la relève, le cas échéant)
+- Consommation eau
+- Consommation électricité
+
+3.2. Application “SI Relevés” (Backoffice Web)
+Authentification
+•
+
+Connexion par login/mot de passe
+
+•
+
+Déconnexion automatique après 10 minutes d’inactivité
+
+•
+
+Gestion de session sécurisée
+
+Page d’accueil : Tableaux de bord et KPIs (rôle Utilisateur)
+•
+
+•
+
+•
+
+Taux de couverture
+◦
+
+Formule : (Nombre de compteurs relevés / Nombre total de compteurs) × 100
+
+◦
+
+Affichage : pourcentage avec jauge visuelle
+
+◦
+
+Détail par quartier
+
+Relevés par jour par agent
+◦
+
+Formule : Nombre moyen de compteurs relevés par agent
+
+◦
+
+Affichage : nombre de compteurs, avec comparaison entre agents
+
+◦
+
+Détail par quartier, par agent
+
+Évolution de la consommation moyenne
+◦
+
+Par type (eau en m³, électricité en kWh)
+
+◦
+
+Évolution mensuelle avec graphique tendanciel
+
+◦
+
+Comparaison année N vs année N-1
+4/9
+
+Page : Liste des relèves (rôle Utilisateur)
+•
+
+Affichage de la liste des relèves avec les informations suivantes
+◦
+
+Date de la relève
+
+◦
+
+Agent ayant effectué la relève
+
+◦
+
+Adresse (tronquée si trop longue)
+
+◦
+
+Type de compteur (Eau / Électricité)
+
+◦
+
+Consommation
+
+•
+
+Relèves effectuées triées de la plus récente à la plus ancienne
+
+•
+
+Filtrage possible par : jour, quartier, agent, client, type de compteur
+
+•
+
+Tri possible par : jour (defaut, descendant), quartier, agent
+
+•
+
+En cliquant sur une des relèves l’utilisateur se voit emmené à la page “Détails de la
+relève”
+
+Page : Détail d’une relève (rôle Utilisateur)
+•
+
+La page affiche, en lecture seule, les informations suivantes :
+◦
+
+Date de la relève
+
+◦
+
+Agent ayant effectué la relève
+
+◦
+
+Adresse
+
+◦
+
+Client
+
+◦
+
+Identifiant compteur
+
+◦
+
+Type de compteur (Eau / Électricité)
+
+◦
+
+Ancien index
+
+◦
+
+Nouvel index
+
+◦
+
+Consommation calculée
+
+Page : Liste des agents (Agent de Terrain) (rôle Utilisateur)
+•
+
+Affichage de la liste des agents avec les informations suivantes :
+◦
+
+Nom et prénom de l’agent
+
+◦
+
+N° de téléphone
+
+◦
+
+Quartier d’affectation
+
+•
+
+Filtrage possible par : quartier
+
+•
+
+Tri possible par : nom (defaut, ascendant), quartier
+
+•
+
+En cliquant sur l’un des agents l’utilisateur se voit emmené à la page “Détails d’un
+agent”
+
+Page : Détail d’un agent (rôle Utilisateur)
+•
+
+La page affiche les informations suivantes :
+◦
+
+Nom de l’agent (lecture seule)
+
+◦
+
+Prénom de l’agent (lecture seule)
+5/9
+
+•
+
+◦
+
+N° de téléphone (lecture seule)
+
+◦
+
+Quartier associé : modifiable
+
+La page affiche les performances de l’agent
+◦
+
+Nombre de compteurs moyens relevés par jour : “Relèves par jour”
+
+◦
+
+Graphe de l’évolution des “Relèves par jour” sur les 3 derniers mois
+
+◦
+
+Possibilité de faire glisser la période sur le graphe d’un an à une semaine
+
+Page : Liste des compteurs (rôle Utilisateur)
+•
+
+Affichage de la liste des compteurs avec les informations suivantes :
+◦
+
+Identifiant du compteur
+
+◦
+
+Adresse (tronquée si trop grande)
+
+•
+
+En cliquant sur l’un des compteurs l’utilisateur se voit emmené à la page “Détails d’un
+compteur”
+
+•
+
+Un bouton “Ajouter” permet d’ajouter un nouveau compteur
+
+Page : Détails d’un compteur (rôle Utilisateur)
+•
+
+La page affiche les informations suivantes (en lecture seule) :
+◦
+
+Identifiant du compteur
+
+◦
+
+Adresse associée
+
+◦
+
+Identifiant client
+
+◦
+
+Index actuel
+
+◦
+
+Date de la dernière relève
+
+◦
+
+Historique des relèves (similaire à la page “Liste des relèves” filtrée suivant le
+compteur en cours) limitée aux 10 dernières relèves
+Un bouton “Plus de détails” ramène vers la page “Liste des relèves” filtrée suivant
+le compteur en cours
+
+Page : Ajout d’un compteur (rôle Utilisateur)
+•
+
+•
+
+Un formulaire est présenté à l’utilisateur pour
+◦
+
+Sélectionner l’adresse
+
+◦
+
+Définir le type (Eau / Electricité)
+
+Pour la sélection de l’adresse, une Popup s’affiche avec la liste des adresses qui ne
+possèdent pas encore de compteur associé
+◦
+
+La liste peut être filtrée par quartier
+
+◦
+
+Un champ de recherche permet de filtrer en recherchant une adresse précise
+
+•
+
+Une fois l’adresse et le type sélectionnée, l’utilisateur peut cliquer sur “Enregistrer” pour
+sauvegarder les informations
+
+•
+
+L’identifiant du compteur est généré automatiquement lors de la sauvegarde
+
+6/9
+
+Page : Rapports et statistiques (rôle Utilisateur)
+Deux rapports exportables en PDF :
+•
+
+•
+
+Rapport mensuel des relevés (Pour aider à mieux répartir les agents)
+◦
+
+Répartition des agents par quartier
+
+◦
+
+Nombre moyen de relèves par agent par jour par quartier
+
+◦
+
+Nombre de relèves par quartier
+
+Évolution de la consommation moyenne (Pour étudier les tendances de
+consommation)
+◦
+
+Par type (eau en m³, électricité en kWh)
+
+◦
+
+Évolution mensuelle avec graphique tendanciel
+
+◦
+
+Comparaison année N vs année N-1
+
+Page : Changement de Mot de Passe (rôle Utilisateur)
+•
+
+Cette page permet à tout utilisateur de modifier son mot de passe directement
+
+Page d’accueil : Liste des utilisateurs (rôle Superadmin)
+•
+
+Affichage de la liste de tous utilisateurs du backoffice (tous rôles confondus) avec les
+informations suivantes :
+◦
+
+Nom et prénom de l’utilisateur
+
+◦
+
+Rôle
+
+◦
+
+Date d’ajout
+
+◦
+
+Dernière date de modification
+
+•
+
+Filtrage possible par : rôle
+
+•
+
+Tri possible par : nom (defaut, ascendant), rôle
+
+•
+
+En cliquant sur l’un des utilisateurs le superadmin se voit emmené à la page “Détails
+d’un utilisateur”
+
+Page : Détails d’un utilisateur (rôle Superadmin)
+•
+
+•
+
+La page affiche les informations suivantes (modifiables) :
+◦
+
+Nom de l’utilisateur
+
+◦
+
+Prénom de l’utilisateur
+
+◦
+
+Rôle de l’utilisateur (Utilsateur ou Superadmin)
+
+Un bouton “Réinitialiser le mot de passe” permet de réexécuter le processus de
+changement de mot de passe pour l’utilisateur
+◦
+
+Génération d’un mot de passe aléatoire par le système
+
+◦
+
+Envoi du mot de passe par mail
+
+◦
+
+L’utilisateur doit modifier son mot de passe à la prochaine connexion
+
+Page : Ajout d’un utilisateur (rôle Superadmin)
+•
+
+Un formulaire est présenté au superadmin pour ajouter les informations suivantes
+7/9
+
+•
+
+◦
+
+Nom du l’utilisateur
+
+◦
+
+Prénom de l’utilisateur
+
+◦
+
+Rôle (Utilsateur ou Superadmin)
+
+Une fois les informations entrées, le superadmin peut cliquer sur “Enregistrer” pour
+sauvegarder les informations. Le processus de changement de mot de passe est
+automatiquement exécuté en arrière-plan
+
+4. Exigences Techniques
+4.1. Flux de données
+•
+
+“SI Commercial” → “SI Relevés” (Backoffice Web) :
+
+Batch récurrent planifié
+•
+
+“SI RH” → “SI Relevés” :
+
+Batch récurrent planifié (comme précédemment)
+•
+
+“SI Relevés” → “Application Relève” mobile
+
+Appel de web service par l’“Application Relève” mobile en début de tournée pour récupérer
+toutes les adresses pour lesquelles la relève n’a pas encore été faite
+•
+
+“Application Relève” mobile → “SI Relevés”
+
+Envoi par web service à chaque relève
+•
+
+“SI Relevés” → “SI Facturation”
+
+Appel de web service effectué automatique après le calcul des consommations
+
+4.2. Stacks technologiques
+“SI Relevés” (Backoffice Web)
+L’application “SI Relevés” pour la gestion des affectations des Agents de Terrain et la gestion
+des compteurs doit faire l’objet d’un développement spécifique.
+L’exigence est de développer une application Frontend / Backend utilisant parmi les stacks
+suivantes :
+•
+
+•
+
+Backend (API) :
+◦
+
+Laravel (PHP)
+
+◦
+
+Node.js
+
+◦
+
+Spring Boot
+
+Frontend :
+◦
+
+Flutter
+
+◦
+
+React
+
+◦
+
+Angular
+
+◦
+
+Vue
+8/9
+
+•
+
+Base de données :
+◦
+
+MySQL
+
+4.5. Sécurité
+“SI Relevés” (Backoffice Web)
+•
+
+A la création d’un nouvel utilisateur par un superadministrateur
+◦
+
+Un mot de passe généré automatiquement (8 caractères min, complexité)
+
+◦
+
+Le mot de passe est envoyé par email (utiliser un outil tel que Mailcatcher ou
+MailHog plutôt que le SMTP de Google)
+
+◦
+
+Changement obligatoire à la première connexion
+
+•
+
+Mots de passe cryptés en base de données
+
+•
+
+Gestion des rôles et permissions et gestion des accès aux APIs adéquates
+
+•
+
+◦
+
+Rôle Superadmin
+
+◦
+
+Rôle Utilisateur
+
+Gestion des sessions via tokens JWT avec expiration de session (30 minutes) et
+déconnexion automatique côté Frontend
+
+Sécurité applicative et traçabilité (Application “SI Relevés”)
+•
+
+Chiffrement des données sensibles en base de données
+
+•
+
+Logs de connexion
+
+•
+
+Gestion des erreurs
+
+•
+
+Messages d'erreur génériques pour l'utilisateur
+
+•
+
+Chiffrement des communications avec HTTPs en utilisant des certificats auto-signés
+(self-signed certificates)
+
+9/9
+
+

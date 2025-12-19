@@ -1,0 +1,110 @@
+@startuml SI-Releve Use Case Diagram
+top to bottom direction
+skinparam packageStyle rectangle
+
+' =====================
+' Human Actors
+' =====================
+actor "SuperAdmin" as SA
+actor "Utilisateur" as USER
+
+' =====================
+' External Systems
+' =====================
+actor "SI RH\n(ERP)" as ERP_RH <<System>>
+actor "SI Commercial\n(ERP)" as ERP_COMM <<System>>
+actor "App Mobile" as MOBILE <<System>>
+actor "SI Facturation\n(ERP)" as ERP_FACT <<System>>
+
+' =====================
+' System Boundary
+' =====================
+rectangle "SI-Relevé - Backoffice Web" {
+
+
+  ' ---------- Administration ----------
+  package "Administration" {
+    usecase "Gérer utilisateurs\n(CRUD)" as MANAGE_USERS
+  }
+  
+  ' ---------- Authentification ----------
+  package "Authentification" {
+    usecase "S'authentifier" as AUTH
+  }
+
+
+  ' ---------- Gestion Opérationnelle ----------
+  package "Gestion Opérationnelle" {
+
+    left to right direction
+
+    ' Use cases principaux (à gauche, près de l'utilisateur)
+    together {
+      usecase "Générer rapports\net KPIs" as REPORTS
+      usecase "Affecter agents\naux quartiers" as ASSIGN_AGENTS
+      usecase "Consulter relevés\net consommations" as VIEW_RELEVES
+      usecase "Gérer compteurs" as MANAGE_COMPTEURS
+    }
+
+    ' Extensions de gestion des compteurs (en dessous)
+    usecase "Créer compteur" as CREATE_COMPTEUR
+    usecase "Supprimer compteur" as DELETE_COMPTEUR
+    usecase "Consulter compteurs" as CONSULT_COMPTEURS
+
+    usecase "Affecter compteur\nà un client" as ASSIGN_COMPTEUR
+
+    ' Use cases de consultation (support)
+    usecase "Consulter liste\ndes clients" as VIEW_CLIENTS
+    usecase "Consulter liste\ndes agents" as VIEW_AGENTS
+  }
+
+  ' ---------- Intégration Données ----------
+  package "Intégration Données" {
+    usecase "Recevoir clients\n(SI Commercial)" as RECV_CLIENTS
+    usecase "Recevoir agents\n(SI RH)" as RECV_AGENTS
+    usecase "Recevoir relevés\n(Mobile)" as RECV_RELEVES
+    usecase "Envoyer consommations\n(SI Facturation)" as SEND_CONSO
+  }
+}
+
+' =====================
+' User Interactions
+' =====================
+SA -down-> AUTH
+SA -down-> MANAGE_USERS
+
+USER -down-> AUTH
+USER -down-> REPORTS
+USER -down-> ASSIGN_AGENTS
+USER -down-> VIEW_RELEVES
+USER -down-> MANAGE_COMPTEURS
+
+' =====================
+' Extensions
+' =====================
+CREATE_COMPTEUR ..> MANAGE_COMPTEURS : <<extend>>
+DELETE_COMPTEUR ..> MANAGE_COMPTEURS : <<extend>>
+CONSULT_COMPTEURS ..> MANAGE_COMPTEURS : <<extend>>
+
+ASSIGN_COMPTEUR ..> CREATE_COMPTEUR : <<extend>>
+
+' =====================
+' Includes (logique métier)
+' =====================
+ASSIGN_COMPTEUR ..> VIEW_CLIENTS : <<include>>
+ASSIGN_AGENTS ..> VIEW_AGENTS : <<include>>
+
+VIEW_CLIENTS ..> RECV_CLIENTS : <<include>>
+VIEW_AGENTS ..> RECV_AGENTS : <<include>>
+
+RECV_RELEVES ..> SEND_CONSO : <<trigger>>
+
+' =====================
+' External Flows
+' =====================
+ERP_COMM -up-> RECV_CLIENTS : Batch automatique
+ERP_RH -up-> RECV_AGENTS : Batch automatique
+MOBILE -down-> RECV_RELEVES : Web Service temps réel
+SEND_CONSO -down-> ERP_FACT : Web Service automatique
+
+@enduml

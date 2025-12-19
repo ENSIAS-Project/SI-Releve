@@ -1,0 +1,83 @@
+@startuml SI-Releve Use Case Diagram
+
+top to bottom direction
+skinparam packageStyle rectangle
+
+' External Systems
+actor "SI Commercial\n(ERP)" as ERP_COMM <<System>>
+actor "SI RH\n(ERP)" as ERP_RH <<System>>
+actor "SI Facturation\n(ERP)" as ERP_FACT <<System>>
+actor "App Mobile" as MOBILE <<System>>
+
+' Human Actors
+actor "SuperAdmin" as SA
+actor "Utilisateur" as USER
+
+rectangle "SI-Relevé - Backoffice Web" {
+  
+  package "Authentification" {
+    usecase "S'authentifier" as AUTH
+  }
+  
+  package "Administration\n(SUPERADMIN uniquement)" {
+    usecase "Gérer utilisateurs" as MANAGE_USERS
+  }
+  
+  package "Gestion Opérationnelle\n(UTILISATEUR)" {
+    usecase "Gérer compteurs" as MANAGE_COMPTEURS
+    usecase "Affecter agents\naux quartiers" as ASSIGN_AGENTS
+    usecase "Consulter relevés\net consommations" as VIEW_RELEVES
+    usecase "Générer rapports\net KPIs" as REPORTS
+  }
+  
+  package "Intégration Données" {
+    usecase "Recevoir clients\n(SI Commercial)" as RECV_CLIENTS
+    usecase "Recevoir agents\n(SI RH)" as RECV_AGENTS
+    usecase "Recevoir relevés\n(Mobile)" as RECV_RELEVES
+    usecase "Envoyer consommations\n(SI Facturation)" as SEND_CONSO
+  }
+}
+
+' External flows
+ERP_COMM --> RECV_CLIENTS : Batch\nautomatique
+ERP_RH --> RECV_AGENTS : Batch\nautomatique
+MOBILE --> RECV_RELEVES : Web Service\ntemps réel
+SEND_CONSO --> ERP_FACT : Web Service\nautomatique
+
+' User interactions
+SA --> AUTH
+SA --> MANAGE_USERS
+
+USER --> AUTH
+USER --> MANAGE_COMPTEURS
+USER --> ASSIGN_AGENTS
+USER --> VIEW_RELEVES
+USER --> REPORTS
+
+' Dependencies
+MANAGE_COMPTEURS ..> RECV_CLIENTS : <<include>>
+ASSIGN_AGENTS ..> RECV_AGENTS : <<include>>
+RECV_RELEVES ..> SEND_CONSO : <<trigger>>
+
+' Notes
+note right of ERP_COMM
+  Envoi nouveaux clients
+  ID, nom, adresses
+end note
+
+note right of ERP_RH
+  Envoi nouveaux agents
+  Nom, prénom, tel.
+end note
+
+note left of ERP_FACT
+  Réception consommations
+  pour facturation
+end note
+
+note left of MOBILE
+  Relevés terrain
+  par agents
+end note
+
+@enduml

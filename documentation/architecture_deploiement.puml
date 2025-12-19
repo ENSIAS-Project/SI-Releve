@@ -1,0 +1,116 @@
+@startuml Architecture de Déploiement SI-Releve
+
+!define RECTANGLE class
+
+skinparam componentStyle rectangle
+skinparam monochrome false
+skinparam shadowing false
+
+' Colors
+skinparam node {
+    BackgroundColor<<frontend>> LightBlue
+    BackgroundColor<<backend>> LightGreen
+    BackgroundColor<<database>> LightYellow
+    BackgroundColor<<mail>> LightPink
+}
+
+' Deployment Nodes
+node "Client Web Browser" <<frontend>> {
+    [Angular 18\nFrontend SPA] as Frontend
+}
+
+node "Serveur d'Application" <<backend>> {
+    package "Spring Boot 4.0.0\n(Java 25)" {
+        [API REST Backend] as Backend
+        [Spring Security\n+ JWT Auth] as Security
+        [Controllers Layer] as Controllers
+        [Service Layer] as Services
+        [Repository Layer] as Repositories
+        
+        Backend ..> Security : utilise
+        Backend --> Controllers
+        Controllers --> Services
+        Services --> Repositories
+    }
+}
+
+node "Base de Données" <<database>> {
+    database "H2 Database\n(In-Memory/File)" as DB
+}
+
+node "Serveur Mail (Dev)" <<mail>> {
+    [SMTP Server\nlocalhost:1025] as Mail
+}
+
+' Communication flows
+Frontend -down-> Backend : "HTTP/REST\nport 8080\n/api/v1/*"
+Backend -down-> DB : "JDBC\nJPA/Hibernate"
+Backend -right-> Mail : "SMTP\nport 1025"
+
+' Notes
+note right of Frontend
+  **Technologies:**
+  - Angular 18
+  - TypeScript
+  - HTTP Client
+  - Proxy: localhost:8080
+  
+  **Fonctionnalités:**
+  - Authentification JWT
+  - Gestion Utilisateurs (SUPERADMIN)
+  - Gestion Clients
+  - Gestion Compteurs
+  - Gestion Agents
+  - Gestion Quartiers
+  - Gestion Relevés
+end note
+
+note right of Backend
+  **Technologies:**
+  - Spring Boot 4.0.0
+  - Spring Security
+  - Spring Data JPA
+  - OAuth2 Resource Server
+  - Spring Mail
+  - Thymeleaf
+  - Bean Validation
+  - Lombok
+  - ZXing (QR Codes)
+  
+  **Port:** 8080
+  **API:** /api/v1
+end note
+
+note right of DB
+  **Type:** H2 Database
+  **Mode:** In-Memory/File
+  **Utilisation:** Développement
+  
+  **Entités:**
+  - User
+  - Client
+  - Compteur
+  - Agent
+  - Quartier
+  - Releve
+  - Adresse
+end note
+
+note bottom of Mail
+  **Mode:** Développement
+  **Tool:** MailHog / FakeSMTP
+  **Auth:** Non requis
+end note
+
+' Security Note
+note top of Security
+  **JWT Authentication:**
+  - Private Key: app.dev.key
+  - Public Key: app.dev.pub
+  
+  **Roles:**
+  - SUPERADMIN
+  - UTILISATEUR
+end note
+
+@enduml

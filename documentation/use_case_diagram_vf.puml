@@ -1,0 +1,98 @@
+@startuml SI-Releve Use Case Diagram
+' 1. Global direction: Left to Right moves actors to sides
+left to right direction
+skinparam packageStyle rectangle
+
+' =====================
+' Human Actors (Left)
+' =====================
+actor "SuperAdmin" as SA
+actor "Utilisateur" as USER
+
+' =====================
+' System Boundary
+' =====================
+rectangle "SI-Relevé - Backoffice Web" {
+
+  ' ---------- Administration ----------
+  package "Administration" {
+    usecase "Gérer utilisateurs\n(CRUD)" as MANAGE_USERS
+  }
+
+  ' ---------- Authentification ----------
+  package "Authentification" {
+    usecase "S'authentifier" as AUTH
+  }
+
+
+
+  ' ---------- Gestion Opérationnelle ----------
+  package "Gestion Opérationnelle" {
+    usecase "Générer rapports\net KPIs" as REPORTS
+    usecase "Affecter agents\naux quartiers" as ASSIGN_AGENTS
+    usecase "Consulter relevés\net consommations" as VIEW_RELEVES
+    usecase "Gérer compteurs" as MANAGE_COMPTEURS
+    usecase "Affecter compteur\nà un client" as ASSIGN_COMPTEUR
+    usecase "Consulter liste\ndes clients" as VIEW_CLIENTS
+    usecase "Consulter liste\ndes agents" as VIEW_AGENTS
+  }
+
+  ' ---------- Intégration Données ----------
+  package "Intégration Données" {
+    usecase "Recevoir clients\n(SI Commercial)" as RECV_CLIENTS
+    usecase "Recevoir agents\n(SI RH)" as RECV_AGENTS
+    usecase "Recevoir relevés\n(Mobile)" as RECV_RELEVES
+    usecase "Envoyer consommations\n(SI Facturation)" as SEND_CONSO
+  }
+}
+
+' =====================
+' External Systems (Right)
+' =====================
+' We group them so they stay neatly aligned on the right
+package "Systèmes Externes" {
+  actor "SI Commercial\n(ERP)" as ERP_COMM <<System>>
+  actor "SI RH\n(ERP)" as ERP_RH <<System>>
+  actor "App Mobile" as MOBILE <<System>>
+  actor "SI Facturation\n(ERP)" as ERP_FACT <<System>>
+}
+
+' =====================
+' User Interactions (Left to Right)
+' =====================
+SA --> AUTH
+SA --> MANAGE_USERS
+
+USER --> AUTH
+USER --> REPORTS
+USER --> ASSIGN_AGENTS
+USER --> VIEW_RELEVES
+USER --> MANAGE_COMPTEURS
+
+' =====================
+' Internal Logic (Extensions & Includes)
+' =====================
+ASSIGN_COMPTEUR ..> MANAGE_COMPTEURS : <<extend>>
+
+ASSIGN_COMPTEUR ..> VIEW_CLIENTS : <<include>>
+ASSIGN_AGENTS ..> VIEW_AGENTS : <<include>>
+
+VIEW_CLIENTS ..> RECV_CLIENTS : <<include>>
+VIEW_AGENTS ..> RECV_AGENTS : <<include>>
+
+RECV_RELEVES ..> SEND_CONSO : <<trigger>>
+
+VIEW_RELEVES ..> RECV_RELEVES : <<include>>
+
+' =====================
+' External Flows (Forced to Right)
+' =====================
+' Note: By using "<---", we force the actor to be on the Right side,
+' while keeping the arrow pointing TOWARDS the Use Case.
+
+RECV_CLIENTS <--- ERP_COMM : Batch automatique
+RECV_AGENTS <--- ERP_RH : Batch automatique
+RECV_RELEVES <--- MOBILE : Web Service temps réel
+SEND_CONSO <--- ERP_FACT : Web Service automatique
+
+@enduml
